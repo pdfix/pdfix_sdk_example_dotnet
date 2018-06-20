@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="pdfix\OcrTesseract.cs" />
     <Compile Include="pdfix\Pdfix.cs" />
     <Compile Include="pdfix\PdfToHtml.cs" />
     <Compile Include="samples\AddTags.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="samples\Initialization.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="samples\OcrWithTesseract.cs" />
     <Compile Include="samples\Utils.cs" />
   </ItemGroup>
   <ItemGroup>

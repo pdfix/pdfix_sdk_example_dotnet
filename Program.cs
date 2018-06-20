@@ -1,4 +1,5 @@
 ﻿using PDFix.App.Module;
+using PDFixSDK.OcrTesseract;
 using PDFixSDK.Pdfix;
 using PDFixSDK.PdfToHtml;
 using System;
@@ -37,6 +38,19 @@ namespace PdfixSDKSample
                   outputDir + "index.html",
                   configPath,
                   new PdfHtmlParams());
+
+                OcrWithTesseract.Run(email, licenseKey, openPath,
+                    outputDir + "OcrWithTesseract.pdf",
+                    resourcesDir,
+                    "eng",
+                    new OcrTesseractParams()
+                    {
+                        rotate = 0,
+                        zoom = 2,
+                        page_seg = OcrTesseractPageSegType.kOcrSegAutoOSD,
+                        engine = OcrTesseractEngineType.kOcrTesseractDefault
+                    });
+
 
                 Console.WriteLine("SUCCESS");
             }
