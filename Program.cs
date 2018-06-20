@@ -1,5 +1,6 @@
 ﻿using PDFix.App.Module;
 using PDFixSDK.Pdfix;
+using PDFixSDK.PdfToHtml;
 using System;
 
 namespace PdfixSDKSample
@@ -32,6 +33,12 @@ namespace PdfixSDKSample
                   resourcesDir + "watermark.png",
                   new PdfWatermarkParams());
 
+                ConvertToHtml.Run(email, licenseKey, openPath,
+                  outputDir + "index.html",
+                  configPath,
+                  new PdfHtmlParams());
+
+                Console.WriteLine("SUCCESS");
             }
             catch (System.Exception ex)
             {
