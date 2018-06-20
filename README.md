@@ -14,6 +14,9 @@ PDF form filling using AcroForm is an important part of many workflows. It allow
 
 Try our autotag feature that recognises all important structures in your documents like tables, lists, reading order.
 
+## Installation
+Copy PDFix SDK binary files (dlls) into working directory which is usually bin/ folder. The dlls should not be referenced as other c# package modules in Visual Studio.
+
 ## Documentation
 For complete SDK documentation see the [PDFix website](https://pdfix.net).
 
