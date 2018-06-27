@@ -61,16 +61,16 @@ namespace PDFix.App.Module
                 stm.Destroy();
             }
 
-            /* set html_param
-            htmlParams.type = kPdfHtmlResponsive;
-            htmlParams.width = 1200;    
-            htmlParams.flags |= kHtmlExportJavaScripts;
-            htmlParams.flags |= kHtmlExportFonts;
-            htmlParams.flags |= kHtmlRetainFontSize;
-            htmlParams.flags |= kHtmlRetainTextColor;
-            htmlParams.flags |= kHtmlNoExternalCSS | kHtmlNoExternalJS | kHtmlNoExternalIMG | kHtmlNoExternalFONT;
-            */
-
+            // set html conversion params
+            //htmlParams.type = PdfHtmlType.kPdfHtmlResponsive;
+            //htmlParams.width = 1200;    
+            //htmlParams.flags |= PdfToHtml.kHtmlExportJavaScripts;
+            //htmlParams.flags |= PdfToHtml.kHtmlExportFonts;
+            //htmlParams.flags |= PdfToHtml.kHtmlRetainFontSize;
+            //htmlParams.flags |= PdfToHtml.kHtmlRetainTextColor;
+            //htmlParams.flags |= PdfToHtml.kHtmlNoExternalCSS | PdfToHtml.kHtmlNoExternalJS |
+            //    PdfToHtml.kHtmlNoExternalIMG | PdfToHtml.kHtmlNoExternalFONT;
+            
             PdfHtmlDoc htmlDoc = pdfToHtml.OpenHtmlDoc(doc);
             if (htmlDoc == null)
                 throw new Exception(pdfix.GetError());
