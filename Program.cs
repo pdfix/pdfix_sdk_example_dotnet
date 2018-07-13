@@ -26,6 +26,10 @@ namespace PdfixSDKSample
                 Console.WriteLine("Initialization Sample");
                 Initialization.Run(email, licenseKey);
 
+                Console.WriteLine("AddComment Sample");
+                AddComment.Run(email, licenseKey, openPath,
+                  outputDir + "/AddComment.pdf");
+
                 Console.WriteLine("AddTags Sample");
                 AddTags.Run(email, licenseKey, openPath,
                   outputDir + "AddTags.pdf",
@@ -55,6 +59,11 @@ namespace PdfixSDKSample
                 ExtractText.Run(email, licenseKey, openPath,
                   outputDir + "ExtractText.txt",
                   configPath);
+
+                Console.WriteLine("FlattenAnnots Sample");
+                FlattenAnnots.Run(email, licenseKey, openPath,
+                  outputDir + "FlattenAnnots.pdf",
+                  new PdfFlattenAnnotsParams());
 
                 Console.WriteLine("MakeAccessible Sample");
                 MakeAccessible.Run(email, licenseKey, openPath,

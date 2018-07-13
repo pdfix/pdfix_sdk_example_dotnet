@@ -7,7 +7,7 @@
 - \subpage ExtractTables_cs
 */
 /*!
-\page ExtractTables_cs Extract Text Sample
+\page ExtractTables_cs Extract Tables Sample
 Example how to extract tables from PDF into a CSV file.
 \snippet /ExtractTables.cs ExtractTables_cs
 */
