@@ -46,6 +46,11 @@ namespace PdfixSDKSample
                       type = PdfHtmlType.kPdfHtmlResponsive
                   });
 
+                Console.WriteLine("ExtractTables Sample");
+                ExtractTables.Run(email, licenseKey, openPath,
+                  outputDir,
+                  configPath);
+
                 Console.WriteLine("ExtractText Sample");
                 ExtractText.Run(email, licenseKey, openPath,
                   outputDir + "ExtractText.txt",

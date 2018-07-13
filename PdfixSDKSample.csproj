@@ -65,6 +65,7 @@
     <Compile Include="samples\AddTags.cs" />
     <Compile Include="samples\AddWatermark.cs" />
     <Compile Include="samples\ConvertToHtml.cs" />
+    <Compile Include="samples\ExtractTables.cs" />
     <Compile Include="samples\ExtractText.cs" />
     <Compile Include="samples\Initialization.cs" />
     <Compile Include="Program.cs" />
