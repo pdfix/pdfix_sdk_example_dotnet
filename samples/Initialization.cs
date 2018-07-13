@@ -34,6 +34,9 @@ namespace PDFix.App.Module
             if (!pdfix.Authorize(email, licenseKey))
                 throw new Exception(pdfix.GetError());
 
+            if (!pdfix.IsAuthorized())
+                throw new Exception("Pdfix Authorization fail");
+
             // ...
 
             pdfix.Destroy();
