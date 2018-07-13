@@ -29,7 +29,7 @@ namespace PDFix.App.Module
         {
             Pdfix pdfix = new Pdfix();
             if (pdfix == null)
-                throw new Exception("Pdfix initialization fail");
+                throw new Exception("Pdfix initialization fail. Please set correct email and license key.");
 
             if (!pdfix.Authorize(email, licenseKey))
                 throw new Exception(pdfix.GetError());

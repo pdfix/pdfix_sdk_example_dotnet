@@ -51,6 +51,13 @@ namespace PdfixSDKSample
                   outputDir + "ExtractText.txt",
                   configPath);
 
+                Console.WriteLine("MakeAccessible Sample");
+                MakeAccessible.Run(email, licenseKey, openPath,
+                  outputDir + "MakeAccessible.pdf",
+                  "en-us",
+                  "",
+                  configPath);
+
                 Console.WriteLine("OcrWithTesseract Sample");
                 OcrWithTesseract.Run(email, licenseKey, openPath,
                     outputDir + "OcrWithTesseract.pdf",
