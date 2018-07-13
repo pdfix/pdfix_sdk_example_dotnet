@@ -7,7 +7,7 @@
 - \subpage ExtractText_cs
 */
 /*!
-\page ConvertToHtml_cs Pdf To Html Sample
+\page ExtractText_cs Extract Text Sample
 Example how to extract text from PDF into a text file.
 \snippet /ExtractText.cs ExtractText_cs
 */
