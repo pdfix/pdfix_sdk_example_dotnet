@@ -23,22 +23,35 @@ namespace PdfixSDKSample
             {
                 System.IO.Directory.CreateDirectory(outputDir);
 
+                Console.WriteLine("Initialization Sample");
                 Initialization.Run(email, licenseKey);
 
+                Console.WriteLine("AddTags Sample");
                 AddTags.Run(email, licenseKey, openPath,
                   outputDir + "AddTags.pdf",
                   configPath);
 
+                Console.WriteLine("AddWatermark Sample");
                 AddWatermark.Run(email, licenseKey, openPath,
                   outputDir + "AddWatermark.pdf",
                   resourcesDir + "watermark.png",
                   new PdfWatermarkParams());
 
+                Console.WriteLine("ConvertToHtml Sample");
                 ConvertToHtml.Run(email, licenseKey, openPath,
                   outputDir + "index.html",
                   configPath,
-                  new PdfHtmlParams());
+                  new PdfHtmlParams()
+                  {
+                      type = PdfHtmlType.kPdfHtmlResponsive
+                  });
 
+                Console.WriteLine("ExtractText Sample");
+                ExtractText.Run(email, licenseKey, openPath,
+                  outputDir + "ExtractText.txt",
+                  configPath);
+
+                Console.WriteLine("OcrWithTesseract Sample");
                 OcrWithTesseract.Run(email, licenseKey, openPath,
                     outputDir + "OcrWithTesseract.pdf",
                     resourcesDir,
@@ -50,7 +63,6 @@ namespace PdfixSDKSample
                         page_seg = OcrTesseractPageSegType.kOcrSegAutoOSD,
                         engine = OcrTesseractEngineType.kOcrTesseractDefault
                     });
-
 
                 Console.WriteLine("SUCCESS");
             }
