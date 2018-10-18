@@ -125,6 +125,15 @@ namespace PDFixSDK {
       kPdsNull = 8,
       kPdsReference = 9,
     }
+    public enum PdfPageObjectType
+    {
+      kPdsPageUnknown = 0,
+      kPdsPageText = 1,
+      kPdsPagePath = 2,
+      kPdsPageImage = 3,
+      kPdsPageShading = 4,
+      kPdsPageForm = 5,
+    }
     public enum PdfElementType
     {
       kPdeUnknown = 0,
@@ -143,9 +152,8 @@ namespace PDFixSDK {
       kPdeFormField = 13,
       kPdeHeader = 14,
       kPdeFooter = 15,
-      kPdeTag = 16,
-      kPdeColumn = 17,
-      kPdeRow = 18,
+      kPdeColumn = 16,
+      kPdeRow = 17,
     }
     public enum PdfLineCap
     {
@@ -350,6 +358,15 @@ namespace PDFixSDK {
       kImageShading = 4,
       kImageTable = 5,
     }
+    public enum PdfTableType
+    {
+      kTableGraphic = 0,
+      kTableIsolated = 1,
+      kTableIsolatedCol = 2,
+      kTableIsolatedRow = 3,
+      kTableForm = 4,
+      kTableElement = 5,
+    }
     public enum PdfListType
     {
       kListUnordered = 0,
@@ -428,6 +445,14 @@ namespace PDFixSDK {
       kFileStream = 0,
       kMemoryStream = 1,
       kProcStream = 2,
+    }
+    public enum PdfStructElementType
+    {
+      kPdsStructKidInvalid = 0,
+      kPdsStructKidElement = 1,
+      kPdsStructKidPageContent = 2,
+      kPdsStructKidStreamContent = 3,
+      kPdsStructKidObject = 4,
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -1279,8 +1304,8 @@ namespace PDFixSDK {
     public struct PdfFlattenAnnotsParams
     {
       public PdfPageRangeParams page_range;
-      public int flags;
-      public PdfFlattenAnnotsParams(PdfPageRangeParams _page_range, int _flags)
+      public PdfAnnotSubtype flags;
+      public PdfFlattenAnnotsParams(PdfPageRangeParams _page_range, PdfAnnotSubtype _flags)
       {
         page_range = _page_range;
         flags = _flags;
@@ -1289,14 +1314,14 @@ namespace PDFixSDK {
       {
         PdfFlattenAnnotsParamsInt result = new PdfFlattenAnnotsParamsInt();
         result.page_range = (PdfPageRangeParamsInt)page_range.GetIntStruct();
-        result.flags = flags;
+        result.flags = (int)flags;
         return result;
       }
       internal void SetIntStruct(PdfFlattenAnnotsParamsInt inStruct)
       {
         page_range = new PdfPageRangeParams();
         page_range.SetIntStruct(inStruct.page_range);
-        flags = inStruct.flags;
+        flags = (PdfAnnotSubtype)inStruct.flags;
       }
     }
     public struct PdfMediaQueryParams
@@ -1384,15 +1409,15 @@ namespace PDFixSDK {
     public class PdsObject : PdfixBase
     {
       public PdsObject(IntPtr obj) : base(obj) { }
-      public PdfObjectType GetType_()
+      public PdfObjectType GetObjectType()
       {
         CheckBaseObj();
-        PdfObjectType ret = PdsObjectGetType(m_obj);
+        PdfObjectType ret = PdsObjectGetObjectType(m_obj);
         return ret;
       }
 
       [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern PdfObjectType PdsObjectGetType(IntPtr obj);
+      internal static extern PdfObjectType PdsObjectGetObjectType(IntPtr obj);
     }
     public class PdsBoolean : PdsObject    {
       public PdsBoolean(IntPtr obj) : base(obj) { }
@@ -1402,119 +1427,163 @@ namespace PDFixSDK {
         bool ret = PdsBooleanGetValue(m_obj);
         return ret;
       }
-      public bool SetValue(bool _value)
-      {
-        CheckBaseObj();
-        bool ret = PdsBooleanSetValue(m_obj, _value);
-        return ret;
-      }
 
       [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
       internal static extern bool PdsBooleanGetValue(IntPtr obj);
-      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern bool PdsBooleanSetValue(IntPtr obj, bool _value);
     }
     public class PdsNumber : PdsObject    {
       public PdsNumber(IntPtr obj) : base(obj) { }
+      public bool IsIntegerValue()
+      {
+        CheckBaseObj();
+        bool ret = PdsNumberIsIntegerValue(m_obj);
+        return ret;
+      }
       public int GetIntegerValue()
       {
         CheckBaseObj();
         int ret = PdsNumberGetIntegerValue(m_obj);
         return ret;
       }
-      public double GetNumberValue()
+      public double GetValue()
       {
         CheckBaseObj();
-        double ret = PdsNumberGetNumberValue(m_obj);
-        return ret;
-      }
-      public bool SetIntegerValue(int _value)
-      {
-        CheckBaseObj();
-        bool ret = PdsNumberSetIntegerValue(m_obj, _value);
-        return ret;
-      }
-      public bool SetNumberValue(double _value)
-      {
-        CheckBaseObj();
-        bool ret = PdsNumberSetNumberValue(m_obj, _value);
+        double ret = PdsNumberGetValue(m_obj);
         return ret;
       }
 
       [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern bool PdsNumberIsIntegerValue(IntPtr obj);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
       internal static extern int PdsNumberGetIntegerValue(IntPtr obj);
       [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern double PdsNumberGetNumberValue(IntPtr obj);
-      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern bool PdsNumberSetIntegerValue(IntPtr obj, int _value);
-      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern bool PdsNumberSetNumberValue(IntPtr obj, double _value);
+      internal static extern double PdsNumberGetValue(IntPtr obj);
     }
     public class PdsString : PdsObject    {
       public PdsString(IntPtr obj) : base(obj) { }
-      public string GetValue()
+      public int GetValue(string _buffer, int _len)
       {
         CheckBaseObj();
-        int _buffer_sz = PdsStringGetValue(m_obj, null, 0);
-        string _buffer_str = new string(new char[_buffer_sz]);
-        int ret = PdsStringGetValue(m_obj, _buffer_str, _buffer_sz);
-        return _buffer_str;
-      }
-      public bool SetValue(string _buffer)
-      {
-        CheckBaseObj();
-        bool ret = PdsStringSetValue(m_obj, _buffer);
+        int ret = PdsStringGetValue(m_obj, _buffer, _len);
         return ret;
+      }
+      public string GetText()
+      {
+        CheckBaseObj();
+        int _text_sz = PdsStringGetText(m_obj, null, 0);
+        string _text_str = new string(new char[_text_sz]);
+        int ret = PdsStringGetText(m_obj, _text_str, _text_sz);
+        return _text_str;
       }
 
       [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
       internal static extern int PdsStringGetValue(IntPtr obj, string _buffer, int _len);
       [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern bool PdsStringSetValue(IntPtr obj, string _buffer);
+      internal static extern int PdsStringGetText(IntPtr obj, string _text, int _len);
     }
     public class PdsName : PdsObject    {
       public PdsName(IntPtr obj) : base(obj) { }
+      public string GetValue()
+      {
+        CheckBaseObj();
+        int _text_sz = PdsNameGetValue(m_obj, null, 0);
+        string _text_str = new string(new char[_text_sz]);
+        int ret = PdsNameGetValue(m_obj, _text_str, _text_sz);
+        return _text_str;
+      }
 
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern int PdsNameGetValue(IntPtr obj, string _text, int _len);
     }
     public class PdsArray : PdsObject    {
       public PdsArray(IntPtr obj) : base(obj) { }
-
-    }
-    public class PdsDictionary : PdsObject    {
-      public PdsDictionary(IntPtr obj) : base(obj) { }
-      public bool KnownObject(string _key)
+      public int GetNumObjects()
       {
         CheckBaseObj();
-        bool ret = PdsDictionaryKnownObject(m_obj, _key);
+        int ret = PdsArrayGetNumObjects(m_obj);
         return ret;
       }
-      public PdsObject GetObject(string _key)
+      public PdsObject Get(int _index)
       {
         CheckBaseObj();
-        IntPtr ret = PdsDictionaryGetObject(m_obj, _key);
+        IntPtr ret = PdsArrayGet(m_obj, _index);
         if (ret != IntPtr.Zero)
         {
           return new PdsObject(ret);
         }
         return null;
       }
-      public bool SetObject(string _key, PdsObject _value)
+
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern int PdsArrayGetNumObjects(IntPtr obj);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern IntPtr PdsArrayGet(IntPtr obj, int _index);
+    }
+    public class PdsDictionary : PdsObject    {
+      public PdsDictionary(IntPtr obj) : base(obj) { }
+      public bool Known(string _key)
       {
         CheckBaseObj();
-        bool ret = PdsDictionarySetObject(m_obj, _key, _value.m_obj);
+        bool ret = PdsDictionaryKnown(m_obj, _key);
+        return ret;
+      }
+      public int GetNumKeys()
+      {
+        CheckBaseObj();
+        int ret = PdsDictionaryGetNumKeys(m_obj);
+        return ret;
+      }
+      public string GetKey(int _index)
+      {
+        CheckBaseObj();
+        int _buffer_sz = PdsDictionaryGetKey(m_obj, _index, null, 0);
+        string _buffer_str = new string(new char[_buffer_sz]);
+        int ret = PdsDictionaryGetKey(m_obj, _index, _buffer_str, _buffer_sz);
+        return _buffer_str;
+      }
+      public PdsObject Get(string _key)
+      {
+        CheckBaseObj();
+        IntPtr ret = PdsDictionaryGet(m_obj, _key);
+        if (ret != IntPtr.Zero)
+        {
+          return new PdsObject(ret);
+        }
+        return null;
+      }
+
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern bool PdsDictionaryKnown(IntPtr obj, string _key);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern int PdsDictionaryGetNumKeys(IntPtr obj);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern int PdsDictionaryGetKey(IntPtr obj, int _index, string _buffer, int _len);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern IntPtr PdsDictionaryGet(IntPtr obj, string _key);
+    }
+    public class PdsStream : PdsObject    {
+      public PdsStream(IntPtr obj) : base(obj) { }
+      public PdsDictionary GetStreamDict()
+      {
+        CheckBaseObj();
+        IntPtr ret = PdsStreamGetStreamDict(m_obj);
+        if (ret != IntPtr.Zero)
+        {
+          return new PdsDictionary(ret);
+        }
+        return null;
+      }
+      public int GetRawDataSize()
+      {
+        CheckBaseObj();
+        int ret = PdsStreamGetRawDataSize(m_obj);
         return ret;
       }
 
       [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern bool PdsDictionaryKnownObject(IntPtr obj, string _key);
+      internal static extern IntPtr PdsStreamGetStreamDict(IntPtr obj);
       [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern IntPtr PdsDictionaryGetObject(IntPtr obj, string _key);
-      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern bool PdsDictionarySetObject(IntPtr obj, string _key, IntPtr _value);
-    }
-    public class PdsStream : PdsObject    {
-      public PdsStream(IntPtr obj) : base(obj) { }
-
+      internal static extern int PdsStreamGetRawDataSize(IntPtr obj);
     }
     public class PdsNull : PdsObject    {
       public PdsNull(IntPtr obj) : base(obj) { }
@@ -1522,6 +1591,71 @@ namespace PDFixSDK {
     }
     public class PdsReference : PdsObject    {
       public PdsReference(IntPtr obj) : base(obj) { }
+      public int GetObjectNumber()
+      {
+        CheckBaseObj();
+        int ret = PdsReferenceGetObjectNumber(m_obj);
+        return ret;
+      }
+
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern int PdsReferenceGetObjectNumber(IntPtr obj);
+    }
+    public class PdsPageObject : PdfixBase
+    {
+      public PdsPageObject(IntPtr obj) : base(obj) { }
+      public PdfPageObjectType GetObjectType()
+      {
+        CheckBaseObj();
+        PdfPageObjectType ret = PdsPageObjectGetObjectType(m_obj);
+        return ret;
+      }
+      public PdfRect GetBBox()
+      {
+        CheckBaseObj();
+        IntPtr _bbox_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(PdfRectInt)));
+        PdsPageObjectGetBBox(m_obj, _bbox_ptr);
+        PdfRectInt _bboxInt = (PdfRectInt)Marshal.PtrToStructure(_bbox_ptr, typeof(PdfRectInt));
+        PdfRect _bbox = new PdfRect();
+        _bbox.SetIntStruct(_bboxInt);
+        Marshal.FreeHGlobal(_bbox_ptr);
+        _bbox_ptr = IntPtr.Zero;
+        return _bbox;
+      }
+
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern PdfPageObjectType PdsPageObjectGetObjectType(IntPtr obj);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern void PdsPageObjectGetBBox(IntPtr obj, IntPtr _bbox);
+    }
+    public class PdsText : PdsPageObject    {
+      public PdsText(IntPtr obj) : base(obj) { }
+      public string GetText()
+      {
+        CheckBaseObj();
+        int _buffer_sz = PdsTextGetText(m_obj, null, 0);
+        string _buffer_str = new string(new char[_buffer_sz]);
+        int ret = PdsTextGetText(m_obj, _buffer_str, _buffer_sz);
+        return _buffer_str;
+      }
+
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern int PdsTextGetText(IntPtr obj, string _buffer, int _len);
+    }
+    public class PdsForm : PdsPageObject    {
+      public PdsForm(IntPtr obj) : base(obj) { }
+
+    }
+    public class PdsPath : PdsPageObject    {
+      public PdsPath(IntPtr obj) : base(obj) { }
+
+    }
+    public class PdsImage : PdsPageObject    {
+      public PdsImage(IntPtr obj) : base(obj) { }
+
+    }
+    public class PdsShading : PdsPageObject    {
+      public PdsShading(IntPtr obj) : base(obj) { }
 
     }
     public class PdeElement : PdfixBase
@@ -1590,7 +1724,6 @@ namespace PDFixSDK {
             case PdfElementType.kPdeTable: return new PdeTable(ret);
             case PdfElementType.kPdeCell: return new PdeCell(ret);
             case PdfElementType.kPdeFormField: return new PdeFormField(ret);
-            case PdfElementType.kPdeTag: return new PdeTag(ret);
             case PdfElementType.kPdeToc: return new PdeToc(ret);
             default: return new PdeElement(ret);
           }
@@ -1645,22 +1778,6 @@ namespace PDFixSDK {
     public class PdeToc : PdeElement    {
       public PdeToc(IntPtr obj) : base(obj) { }
 
-    }
-    public class PdeTag : PdeElement    {
-      public PdeTag(IntPtr obj) : base(obj) { }
-      public PdfStructElement GetStructElement()
-      {
-        CheckBaseObj();
-        IntPtr ret = PdeTagGetStructElement(m_obj);
-        if (ret != IntPtr.Zero)
-        {
-          return new PdfStructElement(ret);
-        }
-        return null;
-      }
-
-      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern IntPtr PdeTagGetStructElement(IntPtr obj);
     }
     public class PdeAnnot : PdeElement    {
       public PdeAnnot(IntPtr obj) : base(obj) { }
@@ -1808,6 +1925,12 @@ namespace PDFixSDK {
         }
         return null;
       }
+      public PdfTableType GetTableType()
+      {
+        CheckBaseObj();
+        PdfTableType ret = PdeTableGetTableType(m_obj);
+        return ret;
+      }
 
       [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
       internal static extern int PdeTableGetNumRows(IntPtr obj);
@@ -1821,6 +1944,8 @@ namespace PDFixSDK {
       internal static extern PdfAlignment PdeTableGetColAlignment(IntPtr obj, int _col);
       [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
       internal static extern IntPtr PdeTableGetCaption(IntPtr obj);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern PdfTableType PdeTableGetTableType(IntPtr obj);
     }
     public class PdeWord : PdeElement    {
       public PdeWord(IntPtr obj) : base(obj) { }
@@ -2544,11 +2669,6 @@ namespace PDFixSDK {
       [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
       internal static extern bool PdfCertDigSigSetCertContext(IntPtr obj, IntPtr _cert_context);
     }
-    public class PdsStructTree : PdfixBase
-    {
-      public PdsStructTree(IntPtr obj) : base(obj) { }
-
-    }
     public class PdfDoc : PdfixBase
     {
       public PdfDoc(IntPtr obj) : base(obj) { }
@@ -2790,6 +2910,36 @@ namespace PDFixSDK {
         _params_ptr = IntPtr.Zero;
         return ret;
       }
+      public PdsObject GetRootObject()
+      {
+        CheckBaseObj();
+        IntPtr ret = PdfDocGetRootObject(m_obj);
+        if (ret != IntPtr.Zero)
+        {
+          return new PdsObject(ret);
+        }
+        return null;
+      }
+      public PdsObject GetInfoObject()
+      {
+        CheckBaseObj();
+        IntPtr ret = PdfDocGetInfoObject(m_obj);
+        if (ret != IntPtr.Zero)
+        {
+          return new PdsObject(ret);
+        }
+        return null;
+      }
+      public PdsStructTree GetStructTree()
+      {
+        CheckBaseObj();
+        IntPtr ret = PdfDocGetStructTree(m_obj);
+        if (ret != IntPtr.Zero)
+        {
+          return new PdsStructTree(ret);
+        }
+        return null;
+      }
 
       [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
       internal static extern bool PdfDocSave(IntPtr obj, string _path, int _flags);
@@ -2851,6 +3001,12 @@ namespace PDFixSDK {
       internal static extern bool PdfDocEmbedFonts(IntPtr obj, bool _subset, [MarshalAs(UnmanagedType.FunctionPtr)]PdfCancelProc _cancel_proc, IntPtr _cancel_data);
       [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
       internal static extern bool PdfDocMakeAccessible(IntPtr obj, IntPtr _params, [MarshalAs(UnmanagedType.FunctionPtr)]PdfCancelProc _cancel_proc, IntPtr _cancel_data);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern IntPtr PdfDocGetRootObject(IntPtr obj);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern IntPtr PdfDocGetInfoObject(IntPtr obj);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern IntPtr PdfDocGetStructTree(IntPtr obj);
     }
     public class PdfDocTemplate : PdfixBase
     {
@@ -3493,6 +3649,22 @@ namespace PDFixSDK {
         _params_ptr = IntPtr.Zero;
         return ret;
       }
+      public int GetNumMcidPageObjects(int _mcid)
+      {
+        CheckBaseObj();
+        int ret = PdfPageGetNumMcidPageObjects(m_obj, _mcid);
+        return ret;
+      }
+      public PdsPageObject GetMcidPageObject(int _mcid, int _index)
+      {
+        CheckBaseObj();
+        IntPtr ret = PdfPageGetMcidPageObject(m_obj, _mcid, _index);
+        if (ret != IntPtr.Zero)
+        {
+          return new PdsPageObject(ret);
+        }
+        return null;
+      }
 
       [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
       internal static extern void PdfPageGetCropBox(IntPtr obj, IntPtr _crop_box);
@@ -3534,6 +3706,10 @@ namespace PDFixSDK {
       internal static extern IntPtr PdfPageGetAnnotAtRect(IntPtr obj, IntPtr _rect, int _index);
       [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
       internal static extern bool PdfPageDrawContent(IntPtr obj, IntPtr _params, [MarshalAs(UnmanagedType.FunctionPtr)]PdfCancelProc _cancel_proc, IntPtr _cancel_data);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern int PdfPageGetNumMcidPageObjects(IntPtr obj, int _mcid);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern IntPtr PdfPageGetMcidPageObject(IntPtr obj, int _mcid, int _index);
     }
     public class PdePageMap : PdfixBase
     {
@@ -3897,36 +4073,283 @@ namespace PDFixSDK {
       public PsProcStream(IntPtr obj) : base(obj) { }
 
     }
-    public class PdfStructElement : PdfixBase
+    public class PdsStructElement : PdfixBase
     {
-      public PdfStructElement(IntPtr obj) : base(obj) { }
+      public PdsStructElement(IntPtr obj) : base(obj) { }
       public string GetType_()
       {
         CheckBaseObj();
-        string ret = PdfStructElementGetType(m_obj);
-        return ret;
-      }
-      public string GetSubtype()
-      {
-        CheckBaseObj();
-        string ret = PdfStructElementGetSubtype(m_obj);
-        return ret;
+        int _text_sz = PdsStructElementGetType(m_obj, null, 0);
+        string _text_str = new string(new char[_text_sz]);
+        int ret = PdsStructElementGetType(m_obj, _text_str, _text_sz);
+        return _text_str;
       }
       public string GetActualText()
       {
         CheckBaseObj();
-        int _buffer_sz = PdfStructElementGetActualText(m_obj, null, 0);
+        int _buffer_sz = PdsStructElementGetActualText(m_obj, null, 0);
         string _buffer_str = new string(new char[_buffer_sz]);
-        int ret = PdfStructElementGetActualText(m_obj, _buffer_str, _buffer_sz);
+        int ret = PdsStructElementGetActualText(m_obj, _buffer_str, _buffer_sz);
+        return _buffer_str;
+      }
+      public string GetAlt()
+      {
+        CheckBaseObj();
+        int _buffer_sz = PdsStructElementGetAlt(m_obj, null, 0);
+        string _buffer_str = new string(new char[_buffer_sz]);
+        int ret = PdsStructElementGetAlt(m_obj, _buffer_str, _buffer_sz);
+        return _buffer_str;
+      }
+      public string GetAbbreviation()
+      {
+        CheckBaseObj();
+        int _buffer_sz = PdsStructElementGetAbbreviation(m_obj, null, 0);
+        string _buffer_str = new string(new char[_buffer_sz]);
+        int ret = PdsStructElementGetAbbreviation(m_obj, _buffer_str, _buffer_sz);
+        return _buffer_str;
+      }
+      public int GetPageNumber()
+      {
+        CheckBaseObj();
+        int ret = PdsStructElementGetPageNumber(m_obj);
+        return ret;
+      }
+      public PdsObject GetAttrObject(int _index)
+      {
+        CheckBaseObj();
+        IntPtr ret = PdsStructElementGetAttrObject(m_obj, _index);
+        if (ret != IntPtr.Zero)
+        {
+          return new PdsObject(ret);
+        }
+        return null;
+      }
+      public PdsObject GetElementObject()
+      {
+        CheckBaseObj();
+        IntPtr ret = PdsStructElementGetElementObject(m_obj);
+        if (ret != IntPtr.Zero)
+        {
+          return new PdsObject(ret);
+        }
+        return null;
+      }
+      public PdsObject GetKidObject(int _index)
+      {
+        CheckBaseObj();
+        IntPtr ret = PdsStructElementGetKidObject(m_obj, _index);
+        if (ret != IntPtr.Zero)
+        {
+          return new PdsObject(ret);
+        }
+        return null;
+      }
+      public PdfStructElementType GetKidType(int _index)
+      {
+        CheckBaseObj();
+        PdfStructElementType ret = PdsStructElementGetKidType(m_obj, _index);
+        return ret;
+      }
+      public int GetKidPageNumber(int _index)
+      {
+        CheckBaseObj();
+        int ret = PdsStructElementGetKidPageNumber(m_obj, _index);
+        return ret;
+      }
+      public int GetKidMcid(int _index)
+      {
+        CheckBaseObj();
+        int ret = PdsStructElementGetKidMcid(m_obj, _index);
+        return ret;
+      }
+      public int GetNumAttrObjects()
+      {
+        CheckBaseObj();
+        int ret = PdsStructElementGetNumAttrObjects(m_obj);
+        return ret;
+      }
+      public int GetNumKids()
+      {
+        CheckBaseObj();
+        int ret = PdsStructElementGetNumKids(m_obj);
+        return ret;
+      }
+      public PdsObject GetParentObject()
+      {
+        CheckBaseObj();
+        IntPtr ret = PdsStructElementGetParentObject(m_obj);
+        if (ret != IntPtr.Zero)
+        {
+          return new PdsObject(ret);
+        }
+        return null;
+      }
+      public string GetTitle()
+      {
+        CheckBaseObj();
+        int _buffer_sz = PdsStructElementGetTitle(m_obj, null, 0);
+        string _buffer_str = new string(new char[_buffer_sz]);
+        int ret = PdsStructElementGetTitle(m_obj, _buffer_str, _buffer_sz);
+        return _buffer_str;
+      }
+      public string GetID()
+      {
+        CheckBaseObj();
+        int _buffer_sz = PdsStructElementGetID(m_obj, null, 0);
+        string _buffer_str = new string(new char[_buffer_sz]);
+        int ret = PdsStructElementGetID(m_obj, _buffer_str, _buffer_sz);
         return _buffer_str;
       }
 
       [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern string PdfStructElementGetType(IntPtr obj);
+      internal static extern int PdsStructElementGetType(IntPtr obj, string _text, int _len);
       [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern string PdfStructElementGetSubtype(IntPtr obj);
+      internal static extern int PdsStructElementGetActualText(IntPtr obj, string _buffer, int _len);
       [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern int PdfStructElementGetActualText(IntPtr obj, string _buffer, int _len);
+      internal static extern int PdsStructElementGetAlt(IntPtr obj, string _buffer, int _len);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern int PdsStructElementGetAbbreviation(IntPtr obj, string _buffer, int _len);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern int PdsStructElementGetPageNumber(IntPtr obj);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern IntPtr PdsStructElementGetAttrObject(IntPtr obj, int _index);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern IntPtr PdsStructElementGetElementObject(IntPtr obj);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern IntPtr PdsStructElementGetKidObject(IntPtr obj, int _index);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern PdfStructElementType PdsStructElementGetKidType(IntPtr obj, int _index);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern int PdsStructElementGetKidPageNumber(IntPtr obj, int _index);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern int PdsStructElementGetKidMcid(IntPtr obj, int _index);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern int PdsStructElementGetNumAttrObjects(IntPtr obj);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern int PdsStructElementGetNumKids(IntPtr obj);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern IntPtr PdsStructElementGetParentObject(IntPtr obj);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern int PdsStructElementGetTitle(IntPtr obj, string _buffer, int _len);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern int PdsStructElementGetID(IntPtr obj, string _buffer, int _len);
+    }
+    public class PdsClassMap : PdfixBase
+    {
+      public PdsClassMap(IntPtr obj) : base(obj) { }
+      public PdsObject GetAttrObject(string _class_name, int _index)
+      {
+        CheckBaseObj();
+        IntPtr ret = PdsClassMapGetAttrObject(m_obj, _class_name, _index);
+        if (ret != IntPtr.Zero)
+        {
+          return new PdsObject(ret);
+        }
+        return null;
+      }
+      public int GetNumAttrObjects(string _class_name)
+      {
+        CheckBaseObj();
+        int ret = PdsClassMapGetNumAttrObjects(m_obj, _class_name);
+        return ret;
+      }
+
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern IntPtr PdsClassMapGetAttrObject(IntPtr obj, string _class_name, int _index);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern int PdsClassMapGetNumAttrObjects(IntPtr obj, string _class_name);
+    }
+    public class PdsRoleMap : PdfixBase
+    {
+      public PdsRoleMap(IntPtr obj) : base(obj) { }
+      public bool DoesMap(string _src, string _dst)
+      {
+        CheckBaseObj();
+        bool ret = PdsRoleMapDoesMap(m_obj, _src, _dst);
+        return ret;
+      }
+      public string GetDirectMap(string _type)
+      {
+        CheckBaseObj();
+        int _buffer_sz = PdsRoleMapGetDirectMap(m_obj, _type, null, 0);
+        string _buffer_str = new string(new char[_buffer_sz]);
+        int ret = PdsRoleMapGetDirectMap(m_obj, _type, _buffer_str, _buffer_sz);
+        return _buffer_str;
+      }
+
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern bool PdsRoleMapDoesMap(IntPtr obj, string _src, string _dst);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern int PdsRoleMapGetDirectMap(IntPtr obj, string _type, string _buffer, int _len);
+    }
+    public class PdsStructTree : PdfixBase
+    {
+      public PdsStructTree(IntPtr obj) : base(obj) { }
+      public PdsClassMap GetClassMap()
+      {
+        CheckBaseObj();
+        IntPtr ret = PdsStructTreeGetClassMap(m_obj);
+        if (ret != IntPtr.Zero)
+        {
+          return new PdsClassMap(ret);
+        }
+        return null;
+      }
+      public PdsObject GetKidObject(int _index)
+      {
+        CheckBaseObj();
+        IntPtr ret = PdsStructTreeGetKidObject(m_obj, _index);
+        if (ret != IntPtr.Zero)
+        {
+          return new PdsObject(ret);
+        }
+        return null;
+      }
+      public int GetNumKids()
+      {
+        CheckBaseObj();
+        int ret = PdsStructTreeGetNumKids(m_obj);
+        return ret;
+      }
+      public PdsRoleMap GetRoleMap()
+      {
+        CheckBaseObj();
+        IntPtr ret = PdsStructTreeGetRoleMap(m_obj);
+        if (ret != IntPtr.Zero)
+        {
+          return new PdsRoleMap(ret);
+        }
+        return null;
+      }
+      public PdsStructElement AcquireStructElement(PdsObject _object)
+      {
+        CheckBaseObj();
+        IntPtr ret = PdsStructTreeAcquireStructElement(m_obj, _object.m_obj);
+        if (ret != IntPtr.Zero)
+        {
+          return new PdsStructElement(ret);
+        }
+        return null;
+      }
+      public bool ReleaseStructElement(PdsStructElement _element)
+      {
+        CheckBaseObj();
+        bool ret = PdsStructTreeReleaseStructElement(m_obj, _element.m_obj);
+        return ret;
+      }
+
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern IntPtr PdsStructTreeGetClassMap(IntPtr obj);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern IntPtr PdsStructTreeGetKidObject(IntPtr obj, int _index);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern int PdsStructTreeGetNumKids(IntPtr obj);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern IntPtr PdsStructTreeGetRoleMap(IntPtr obj);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern IntPtr PdsStructTreeAcquireStructElement(IntPtr obj, IntPtr _object);
+      [DllImport("pdfix.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern bool PdsStructTreeReleaseStructElement(IntPtr obj, IntPtr _element);
     }
     public class PsMetadata : PdfixBase
     {
@@ -3982,92 +4405,87 @@ namespace PDFixSDK {
       public const int kErrorPdfDigSigVerifyDetachedMessage = 29;
       public const int kErrorPdfDigSigUnknownType = 30;
       public const int kErrorPdfDigSigCallback = 31;
-      public const int kErrorPdfCosObjInvalid = 32;
+      public const int kErrorPdsObjectInvalid = 32;
       public const int kErrorPdfFontSubstFontMissing = 33;
       public const int kErrorPdfPageRelease = 34;
       public const int kErrorPdfPageGetImage = 35;
       public const int kErrorPdfPageInvalidObj = 36;
       public const int kErrorPdfPageInvalidColorSpace = 37;
-      public const int kErrorPdfPageOutOfRange = 38;
-      public const int kErrorPdfPageMapInvalidObj = 39;
-      public const int kErrorPdfPageMapParse = 40;
-      public const int kErrorPdfPageMapRangeOutOf = 41;
-      public const int kErrorPdfPageMapAddElement = 42;
-      public const int kErrorPdfPageMapCantInsertTj = 43;
-      public const int kErrorPdfPageMapWhitespaceOutOfRange = 44;
-      public const int kErrorPdfPageViewNotFound = 45;
-      public const int kErrorPsImageOpenFile = 46;
-      public const int kErrorPsImageUnsupportedFormat = 47;
-      public const int kErrorPsImageWriteBMP = 48;
-      public const int kErrorPsImageWritePNG = 49;
-      public const int kErrorPsImageWriteJPG = 50;
-      public const int kErrorPsImageInvalidBitmap = 51;
-      public const int kErrorPsImageFormat = 52;
-      public const int kErrorPdfAnnotMalformed = 53;
-      public const int kErrorPdfAnnotInvalidType = 54;
-      public const int kErrorPdfAnnotOutOfRange = 55;
-      public const int kErrorPdeAnnotMalformed = 56;
-      public const int kErrorPdeElementChildrenOutOfRange = 57;
-      public const int kErrorPdeElementMalformed = 58;
-      public const int kErrorPdeTextRunMalformed = 59;
-      public const int kErrorPdeWordMalformed = 60;
-      public const int kErrorPdeLineMalformed = 61;
-      public const int kErrorPdeListMalformed = 62;
-      public const int kErrorPdeTextMalformed = 63;
-      public const int kErrorPdeTextRangeOutOf = 64;
-      public const int kErrorPdeTextSelectRange = 65;
-      public const int kErrorPdeTableMalformed = 66;
-      public const int kErrorPdeTableCellRangeOutOf = 67;
-      public const int kErrorPdeCellRangeOutOf = 68;
-      public const int kErrorPsRegexDestroy = 69;
-      public const int kErrorPsRegexPatternMissing = 70;
-      public const int kErrorPsRegexPositionOutOfRange = 71;
-      public const int kErrorPsEventMalformed = 72;
-      public const int kErrorPsEventExists = 73;
-      public const int kErrorPsNoEvent = 74;
-      public const int kErrorPdfBookmarkMalformed = 75;
-      public const int kErrorPdfBookmarkRoot = 76;
-      public const int kErrorPdfBookmarkChildrenOutOfRange = 77;
-      public const int kErrorPsAuthorizationFailed = 78;
-      public const int kErrorPsAuthorizationNeeded = 79;
-      public const int kErrorPsAuthorizationCalled = 80;
-      public const int kErrorPsAuthorizationEmail = 81;
-      public const int kErrorPsAuthorizationWin = 82;
-      public const int kErrorPsAuthorizationMac = 83;
-      public const int kErrorPsAuthorizationAndroid = 84;
-      public const int kErrorPsAuthorizationiOS = 85;
-      public const int kErrorPsAuthorizationLinux = 86;
-      public const int kErrorPsAuthorizationServer = 87;
-      public const int kErrorPsAuthorizationFeature = 88;
-      public const int kErrorPsAuthorizationDate = 89;
-      public const int kErrorPsAuthorizationVersion = 90;
-      public const int kErrorPsAuthorizationNumber = 91;
-      public const int kErrorPsAuthorizationOsCheck = 92;
-      public const int kErrorPdfFontNotEmbedded = 93;
-      public const int kErrorPdfFontSave = 94;
-      public const int kErrorPathNotFound = 95;
-      public const int kErrorPdfPageMapAddTags = 96;
-      public const int kErrorPdfPageMapRemoveTags = 97;
-      public const int kErrorPdfAlternateNotFound = 98;
-      public const int kErrorPdfAlternateInvalid = 99;
-      public const int kErrorPdfAlternateResourceNotFound = 100;
-      public const int kErrorPdfHtmlAlternateFont = 101;
-      public const int kErrorPdfHtmlAlternateCreateAF = 102;
-      public const int kErrorPdfHtmlAlternateWriteAF = 103;
-      public const int kErrorPdfHtmlAlternateImage = 104;
-      public const int kErrorPsStreamReadProcMissing = 105;
-      public const int kErrorPsStreamWriteProcMissing = 106;
-      public const int kErrorPsStreamGetSizeProcMissing = 107;
-      public const int kErrorPdfPageMapTagAttributes = 108;
-      public const int kErrorPdfPageMapTagParentTree = 109;
-      public const int kErrorPdeContentWriter = 110;
-      public const int kErrorParsingDataFile = 111;
-      public const int kErrorPsRegexSearchFail = 112;
-      public const int kErrorDocTemplateInvalidQuery = 113;
-      public const int kErrorDocTemplateInvalidValue = 114;
-      public const int kErrorPdsStructTreeInvalid = 115;
-      public const int kErrorPsRegexIndexOutOfBounds = 116;
-      public const int kErrorInit = 117;
+      public const int kErrorPdfPageMapInvalidObj = 38;
+      public const int kErrorPdfPageMapParse = 39;
+      public const int kErrorPdfPageMapRangeOutOf = 40;
+      public const int kErrorPdfPageMapAddElement = 41;
+      public const int kErrorPdfPageMapCantInsertTj = 42;
+      public const int kErrorPdfPageViewNotFound = 43;
+      public const int kErrorPsImageOpenFile = 44;
+      public const int kErrorPsImageUnsupportedFormat = 45;
+      public const int kErrorPsImageWriteBMP = 46;
+      public const int kErrorPsImageWritePNG = 47;
+      public const int kErrorPsImageWriteJPG = 48;
+      public const int kErrorPsImageInvalidBitmap = 49;
+      public const int kErrorPsImageFormat = 50;
+      public const int kErrorPdfAnnotMalformed = 51;
+      public const int kErrorPdfAnnotInvalidType = 52;
+      public const int kErrorPdeAnnotMalformed = 53;
+      public const int kErrorPdeElementMalformed = 54;
+      public const int kErrorPdeTextRunMalformed = 55;
+      public const int kErrorPdeWordMalformed = 56;
+      public const int kErrorPdeLineMalformed = 57;
+      public const int kErrorPdeListMalformed = 58;
+      public const int kErrorPdeTextMalformed = 59;
+      public const int kErrorPdeTextRangeOutOf = 60;
+      public const int kErrorPdeTextSelectRange = 61;
+      public const int kErrorPdeTableMalformed = 62;
+      public const int kErrorPdeTableCellRangeOutOf = 63;
+      public const int kErrorPdeCellRangeOutOf = 64;
+      public const int kErrorPsRegexDestroy = 65;
+      public const int kErrorPsRegexPatternMissing = 66;
+      public const int kErrorPsEventMalformed = 67;
+      public const int kErrorPsEventExists = 68;
+      public const int kErrorPsNoEvent = 69;
+      public const int kErrorPdfBookmarkMalformed = 70;
+      public const int kErrorPdfBookmarkRoot = 71;
+      public const int kErrorPsAuthorizationFailed = 72;
+      public const int kErrorPsAuthorizationNeeded = 73;
+      public const int kErrorPsAuthorizationCalled = 74;
+      public const int kErrorPsAuthorizationEmail = 75;
+      public const int kErrorPsAuthorizationWin = 76;
+      public const int kErrorPsAuthorizationMac = 77;
+      public const int kErrorPsAuthorizationAndroid = 78;
+      public const int kErrorPsAuthorizationiOS = 79;
+      public const int kErrorPsAuthorizationLinux = 80;
+      public const int kErrorPsAuthorizationServer = 81;
+      public const int kErrorPsAuthorizationFeature = 82;
+      public const int kErrorPsAuthorizationDate = 83;
+      public const int kErrorPsAuthorizationVersion = 84;
+      public const int kErrorPsAuthorizationNumber = 85;
+      public const int kErrorPsAuthorizationOsCheck = 86;
+      public const int kErrorPdfFontNotEmbedded = 87;
+      public const int kErrorPdfFontSave = 88;
+      public const int kErrorPathNotFound = 89;
+      public const int kErrorPdfPageMapAddTags = 90;
+      public const int kErrorPdfPageMapRemoveTags = 91;
+      public const int kErrorPdfAlternateNotFound = 92;
+      public const int kErrorPdfAlternateInvalid = 93;
+      public const int kErrorPdfAlternateResourceNotFound = 94;
+      public const int kErrorPdfHtmlAlternateFont = 95;
+      public const int kErrorPdfHtmlAlternateCreateAF = 96;
+      public const int kErrorPdfHtmlAlternateWriteAF = 97;
+      public const int kErrorPdfHtmlAlternateImage = 98;
+      public const int kErrorPsStreamReadProcMissing = 99;
+      public const int kErrorPsStreamWriteProcMissing = 100;
+      public const int kErrorPsStreamGetSizeProcMissing = 101;
+      public const int kErrorPdfPageMapTagAttributes = 102;
+      public const int kErrorPdfPageMapTagParentTree = 103;
+      public const int kErrorPdeContentWriter = 104;
+      public const int kErrorParsingDataFile = 105;
+      public const int kErrorPsRegexSearchFail = 106;
+      public const int kErrorDocTemplateInvalidQuery = 107;
+      public const int kErrorDocTemplateInvalidValue = 108;
+      public const int kErrorPdsStructTreeInvalid = 109;
+      public const int kErrorInit = 110;
+      public const int kErrorIndexOutOfRange = 111;
+      public const int kErrorPdsStructElementNotFound = 112;
       public const int kAnnotFlagNone = 0x0000;
       public const int kAnnotFlagInvisible = 0x0001;
       public const int kAnnotFlagHidden = 0x0002;
@@ -4093,6 +4511,7 @@ namespace PDFixSDK {
       public const int kTextFlagPatternStroke = 0x080;
       public const int kTextFlagAngle = 0x100;
       public const int kTextFlagWhiteSpace = 0x200;
+      public const int kTextFlagUnicode = 0x400;
       public const int kFieldFlagNone = 0x00000000;
       public const int kFieldFlagReadOnly = 0x00000001;
       public const int kFieldFlagRequired = 0x00000002;
