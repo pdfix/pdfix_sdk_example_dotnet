@@ -50,6 +50,12 @@ namespace PdfixSDKSample
                       type = PdfHtmlType.kPdfHtmlResponsive
                   });
 
+                Console.WriteLine("DigitalSignature Sample");
+                DigitalSignature.Run(email, licenseKey, openPath,
+                  outputDir + "DigitalSignature.pdf",
+                  resourcesDir + "test.pfx",
+                  "TEST_PASSWORD");
+
                 Console.WriteLine("ExtractTables Sample");
                 ExtractTables.Run(email, licenseKey, openPath,
                   outputDir,
