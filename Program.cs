@@ -41,7 +41,7 @@ namespace PdfixSDKSample
                   resourcesDir + "watermark.png",
                   new PdfWatermarkParams());
 
-                Console.WriteLine("ConvertToHtml Sample");
+                Console.WriteLine("ConvertToHtml Responsive Sample");
                 ConvertToHtml.Run(email, licenseKey, openPath,
                   outputDir + "index.html",
                   configPath,
@@ -49,6 +49,12 @@ namespace PdfixSDKSample
                   {
                       type = PdfHtmlType.kPdfHtmlResponsive
                   });
+
+                Console.WriteLine("ConvertToHtmlByPages Sample");
+                ConvertToHtmlByPages.Run(email, licenseKey, openPath,
+                  outputDir + "",
+                  configPath,
+                  new PdfHtmlParams());
 
                 Console.WriteLine("DigitalSignature Sample");
                 DigitalSignature.Run(email, licenseKey, openPath,
