@@ -51,7 +51,31 @@ namespace PDFix.App.Module
                 stm.Destroy();
             }
 
-            if (!doc.AddTags(null, IntPtr.Zero))
+            // define a cancel progress callback
+            PdfCancelProc cancel_callback = (data) =>
+            {
+                // to cancel the process return 1
+                Console.WriteLine("PdfCancelProc callback was called");
+                return 0;
+            };
+
+            PdfPage page = doc.AcquirePage(0);
+            PdePageMap pageMap = page.AcquirePageMap(null, IntPtr.Zero);
+
+            // define an event callback
+            PdfEventProc event_callback = (data) =>
+            {
+                Console.WriteLine("Page contents did change. Releasing pageMap...");
+                if (pageMap != null)
+                {
+                    pageMap.Release();
+                    pageMap = null;
+                }
+            };
+            if (!pdfix.RegisterEvent(PdfEventType.kEventPageContentsDidChange, event_callback, IntPtr.Zero))
+                throw new Exception(pdfix.GetError());
+
+            if (!doc.AddTags(cancel_callback, IntPtr.Zero)) 
                 throw new Exception(pdfix.GetError());
 
             if (!doc.Save(savePath, PdfSaveFlags.kSaveFull))

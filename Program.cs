@@ -28,7 +28,7 @@ namespace PdfixSDKSample
 
                 Console.WriteLine("AddComment Sample");
                 AddComment.Run(email, licenseKey, openPath,
-                  outputDir + "/AddComment.pdf");
+                  outputDir + "AddComment.pdf");
 
                 Console.WriteLine("AddTags Sample");
                 AddTags.Run(email, licenseKey, openPath,
@@ -41,16 +41,12 @@ namespace PdfixSDKSample
                   resourcesDir + "watermark.png",
                   new PdfWatermarkParams());
 
-                Console.WriteLine("ConvertToHtml Responsive Sample");
+                Console.WriteLine("ConvertToHtml Sample");
                 ConvertToHtml.Run(email, licenseKey, openPath,
                   outputDir + "index.html",
                   configPath,
-                  new PdfHtmlParams()
-                  {
-                      type = PdfHtmlType.kPdfHtmlResponsive
-                  });
+                  new PdfHtmlParams());
 
-                Console.WriteLine("ConvertToHtmlByPages Sample");
                 ConvertToHtmlByPages.Run(email, licenseKey, openPath,
                   outputDir + "",
                   configPath,
@@ -61,6 +57,7 @@ namespace PdfixSDKSample
                   outputDir + "DigitalSignature.pdf",
                   resourcesDir + "test.pfx",
                   "TEST_PASSWORD");
+
 
                 Console.WriteLine("ExtractTables Sample");
                 ExtractTables.Run(email, licenseKey, openPath,
@@ -84,18 +81,36 @@ namespace PdfixSDKSample
                   "",
                   configPath);
 
+                Console.WriteLine("TagEditStructureTree Sample");
+                TagEditStructureTree.Run(email, licenseKey, openPath,
+                  outputDir + "TagEditStructureTree.pdf");
+
+                Console.WriteLine("TagsReadStructTree sample");
+                TagsReadStructTree.Run(email, licenseKey, openPath, outputDir + "TagsReadStructTree.pdf");
+
+                Console.WriteLine("TagsReadingOrder sample");
+                TagsReadingOrder.Run(email, licenseKey, openPath, outputDir + "TagsReadingOrder.pdf");
+
+                Console.WriteLine("TagTableAsFigure sample");
+                TagTableAsFigure.Run(email, licenseKey, openPath, outputDir + "TagTableAsFigure.pdf");
+
+                Console.WriteLine("TagHeadings Sample");
+                TagHeadings.Run(email, licenseKey, openPath, outputDir + "TagHeadings.pdf");
+
+                Console.WriteLine("TagAsArtifact Sample");
+                TagAsArtifact.Run(email, licenseKey, openPath, outputDir + "TagAsArtifact.pdf");
+
                 Console.WriteLine("OcrWithTesseract Sample");
                 OcrWithTesseract.Run(email, licenseKey, openPath,
-                    outputDir + "OcrWithTesseract.pdf",
-                    resourcesDir,
-                    "eng",
-                    new OcrTesseractParams()
-                    {
-                        rotate = 0,
-                        zoom = 2,
-                        page_seg = OcrTesseractPageSegType.kOcrSegAutoOSD,
-                        engine = OcrTesseractEngineType.kOcrTesseractDefault
-                    });
+                  outputDir + "OcrWithTesseract.pdf",
+                  resourcesDir + "tessdata\\",
+                  "eng");
+
+                Console.WriteLine("ParsePdsObjects Sample");
+                ParsePdsObjects.Run(email, licenseKey, openPath);
+
+                Console.WriteLine("ThreadSafePdfix Sample");
+                ThreadSafePdfix.Run(email, licenseKey, openPath);
 
                 Console.WriteLine("SUCCESS");
             }

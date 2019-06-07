@@ -123,8 +123,7 @@ namespace PDFix.App.Module
             // parse children recursivelly
             ParseElement(container, outDir);
 
-            page.ReleasePageMap();
-            pageMap = null;
+            pageMap.Release();
         }
 
         public static void Run(
@@ -153,7 +152,8 @@ namespace PDFix.App.Module
                 if (page == null)
                     throw new Exception(pdfix.GetError());
                 ParsePage(pdfix, page, savePath);
-                doc.ReleasePage(page);
+
+                page.Release();
             }
 
             Console.WriteLine(tableIndex + " tables detected");

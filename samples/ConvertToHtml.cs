@@ -68,9 +68,9 @@ namespace PDFix.App.Module
             //htmlParams.flags |= PdfToHtml.kHtmlExportFonts;
             //htmlParams.flags |= PdfToHtml.kHtmlRetainFontSize;
             //htmlParams.flags |= PdfToHtml.kHtmlRetainTextColor;
-            //htmlParams.flags |= PdfToHtml.kHtmlNoExternalCSS | PdfToHtml.kHtmlNoExternalJS |
-            //    PdfToHtml.kHtmlNoExternalIMG | PdfToHtml.kHtmlNoExternalFONT;
-            
+            htmlParams.flags |= PdfToHtml.kHtmlNoExternalCSS | PdfToHtml.kHtmlNoExternalJS |
+                PdfToHtml.kHtmlNoExternalIMG | PdfToHtml.kHtmlNoExternalFONT;
+
             PdfHtmlDoc htmlDoc = pdfToHtml.OpenHtmlDoc(doc);
             if (htmlDoc == null)
                 throw new Exception(pdfix.GetError());

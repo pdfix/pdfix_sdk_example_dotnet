@@ -1,7 +1,7 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2016 PDFix. All Rights Reserved.
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2019 PDFix (http://pdfix.net). All Rights Reserved.
 // This file was generated automatically
-////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 using System;
 using System.Runtime.InteropServices;
 using PDFixSDK.Pdfix;
@@ -34,6 +34,10 @@ namespace PDFixSDK {
       }
       static internal void PtrWritePtr(IntPtr ptr, IntPtr value)
       {
+      }
+      static internal bool Is64BitProcess()
+      {
+        return IntPtr.Size == 8;
       }
     }
     public class PdfToHtmlBase
@@ -118,13 +122,20 @@ namespace PDFixSDK {
       {
         m_obj = GetPdfToHtml();
       }
-      [DllImport("pdf_to_html.dll", CharSet = CharSet.Unicode)]
-      internal static extern IntPtr GetPdfToHtml();
+      [DllImport("pdf_to_html.dll", EntryPoint="GetPdfToHtml", CharSet = CharSet.Unicode)]
+      internal static extern IntPtr GetPdfToHtml32();
+      [DllImport("pdf_to_html64.dll", EntryPoint="GetPdfToHtml", CharSet = CharSet.Unicode)]
+      internal static extern IntPtr GetPdfToHtml64();
+      internal static IntPtr GetPdfToHtml()
+      {
+        if (Util.Is64BitProcess()) return GetPdfToHtml64();
+        else return GetPdfToHtml32();
+      }
       public PdfToHtml(IntPtr obj) : base(obj) { }
       public PdfHtmlDoc OpenHtmlDoc(PdfDoc _doc)
       {
         CheckBaseObj();
-        IntPtr ret = PdfToHtmlOpenHtmlDoc(m_obj, _doc.m_obj);
+        IntPtr ret = PdfToHtmlOpenHtmlDoc(m_obj, _doc == null ? IntPtr.Zero : _doc.m_obj);
         if (ret != IntPtr.Zero)
         {
           return new PdfHtmlDoc(ret);
@@ -134,22 +145,43 @@ namespace PDFixSDK {
       public bool SaveCSS(PsStream _stream)
       {
         CheckBaseObj();
-        bool ret = PdfToHtmlSaveCSS(m_obj, _stream.m_obj);
-        return ret;
+        byte ret = PdfToHtmlSaveCSS(m_obj, _stream == null ? IntPtr.Zero : _stream.m_obj);
+        return ret != 0;
       }
       public bool SaveJavaScript(PsStream _stream)
       {
         CheckBaseObj();
-        bool ret = PdfToHtmlSaveJavaScript(m_obj, _stream.m_obj);
-        return ret;
+        byte ret = PdfToHtmlSaveJavaScript(m_obj, _stream == null ? IntPtr.Zero : _stream.m_obj);
+        return ret != 0;
       }
 
-      [DllImport("pdf_to_html.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern IntPtr PdfToHtmlOpenHtmlDoc(IntPtr obj, IntPtr _doc);
-      [DllImport("pdf_to_html.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern bool PdfToHtmlSaveCSS(IntPtr obj, IntPtr _stream);
-      [DllImport("pdf_to_html.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern bool PdfToHtmlSaveJavaScript(IntPtr obj, IntPtr _stream);
+      [DllImport("pdf_to_html.dll", EntryPoint="PdfToHtmlOpenHtmlDoc", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern IntPtr PdfToHtmlOpenHtmlDoc32(IntPtr obj, IntPtr _doc);
+      [DllImport("pdf_to_html64.dll", EntryPoint="PdfToHtmlOpenHtmlDoc", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern IntPtr PdfToHtmlOpenHtmlDoc64(IntPtr obj, IntPtr _doc);
+      internal static IntPtr PdfToHtmlOpenHtmlDoc(IntPtr obj, IntPtr _doc)
+      {
+        if (Util.Is64BitProcess()) return PdfToHtmlOpenHtmlDoc64(obj, _doc);
+        else return PdfToHtmlOpenHtmlDoc32(obj, _doc);
+      }
+      [DllImport("pdf_to_html.dll", EntryPoint="PdfToHtmlSaveCSS", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern byte PdfToHtmlSaveCSS32(IntPtr obj, IntPtr _stream);
+      [DllImport("pdf_to_html64.dll", EntryPoint="PdfToHtmlSaveCSS", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern byte PdfToHtmlSaveCSS64(IntPtr obj, IntPtr _stream);
+      internal static byte PdfToHtmlSaveCSS(IntPtr obj, IntPtr _stream)
+      {
+        if (Util.Is64BitProcess()) return PdfToHtmlSaveCSS64(obj, _stream);
+        else return PdfToHtmlSaveCSS32(obj, _stream);
+      }
+      [DllImport("pdf_to_html.dll", EntryPoint="PdfToHtmlSaveJavaScript", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern byte PdfToHtmlSaveJavaScript32(IntPtr obj, IntPtr _stream);
+      [DllImport("pdf_to_html64.dll", EntryPoint="PdfToHtmlSaveJavaScript", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern byte PdfToHtmlSaveJavaScript64(IntPtr obj, IntPtr _stream);
+      internal static byte PdfToHtmlSaveJavaScript(IntPtr obj, IntPtr _stream)
+      {
+        if (Util.Is64BitProcess()) return PdfToHtmlSaveJavaScript64(obj, _stream);
+        else return PdfToHtmlSaveJavaScript32(obj, _stream);
+      }
     }
     public class PdfHtmlDoc : PdfToHtmlBase
     {
@@ -157,8 +189,8 @@ namespace PDFixSDK {
       public bool Close()
       {
         CheckBaseObj();
-        bool ret = PdfHtmlDocClose(m_obj);
-        return ret;
+        byte ret = PdfHtmlDocClose(m_obj);
+        return ret != 0;
       }
       public bool Save(string _path, PdfHtmlParams _params, PdfCancelProc _cancel_proc, IntPtr _cancel_data)
       {
@@ -166,10 +198,10 @@ namespace PDFixSDK {
         PdfHtmlParamsInt _paramsInt = _params.GetIntStruct();
         IntPtr _params_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(PdfHtmlParamsInt)));
         Marshal.StructureToPtr(_paramsInt, _params_ptr, true);
-        bool ret = PdfHtmlDocSave(m_obj, _path, _params_ptr, _cancel_proc, _cancel_data);
+        byte ret = PdfHtmlDocSave(m_obj, _path, _params_ptr, _cancel_proc, _cancel_data);
         Marshal.FreeHGlobal(_params_ptr);
         _params_ptr = IntPtr.Zero;
-        return ret;
+        return ret != 0;
       }
       public bool SaveDocHtml(PsStream _stream, PdfHtmlParams _params, PdfCancelProc _cancel_proc, IntPtr _cancel_data)
       {
@@ -177,10 +209,10 @@ namespace PDFixSDK {
         PdfHtmlParamsInt _paramsInt = _params.GetIntStruct();
         IntPtr _params_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(PdfHtmlParamsInt)));
         Marshal.StructureToPtr(_paramsInt, _params_ptr, true);
-        bool ret = PdfHtmlDocSaveDocHtml(m_obj, _stream.m_obj, _params_ptr, _cancel_proc, _cancel_data);
+        byte ret = PdfHtmlDocSaveDocHtml(m_obj, _stream == null ? IntPtr.Zero : _stream.m_obj, _params_ptr, _cancel_proc, _cancel_data);
         Marshal.FreeHGlobal(_params_ptr);
         _params_ptr = IntPtr.Zero;
-        return ret;
+        return ret != 0;
       }
       public bool SavePageHtml(PsStream _stream, PdfHtmlParams _params, int _page_num, PdfCancelProc _cancel_proc, IntPtr _cancel_data)
       {
@@ -188,20 +220,48 @@ namespace PDFixSDK {
         PdfHtmlParamsInt _paramsInt = _params.GetIntStruct();
         IntPtr _params_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(PdfHtmlParamsInt)));
         Marshal.StructureToPtr(_paramsInt, _params_ptr, true);
-        bool ret = PdfHtmlDocSavePageHtml(m_obj, _stream.m_obj, _params_ptr, _page_num, _cancel_proc, _cancel_data);
+        byte ret = PdfHtmlDocSavePageHtml(m_obj, _stream == null ? IntPtr.Zero : _stream.m_obj, _params_ptr, _page_num, _cancel_proc, _cancel_data);
         Marshal.FreeHGlobal(_params_ptr);
         _params_ptr = IntPtr.Zero;
-        return ret;
+        return ret != 0;
       }
 
-      [DllImport("pdf_to_html.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern bool PdfHtmlDocClose(IntPtr obj);
-      [DllImport("pdf_to_html.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern bool PdfHtmlDocSave(IntPtr obj, string _path, IntPtr _params, [MarshalAs(UnmanagedType.FunctionPtr)]PdfCancelProc _cancel_proc, IntPtr _cancel_data);
-      [DllImport("pdf_to_html.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern bool PdfHtmlDocSaveDocHtml(IntPtr obj, IntPtr _stream, IntPtr _params, [MarshalAs(UnmanagedType.FunctionPtr)]PdfCancelProc _cancel_proc, IntPtr _cancel_data);
-      [DllImport("pdf_to_html.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern bool PdfHtmlDocSavePageHtml(IntPtr obj, IntPtr _stream, IntPtr _params, int _page_num, [MarshalAs(UnmanagedType.FunctionPtr)]PdfCancelProc _cancel_proc, IntPtr _cancel_data);
+      [DllImport("pdf_to_html.dll", EntryPoint="PdfHtmlDocClose", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern byte PdfHtmlDocClose32(IntPtr obj);
+      [DllImport("pdf_to_html64.dll", EntryPoint="PdfHtmlDocClose", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern byte PdfHtmlDocClose64(IntPtr obj);
+      internal static byte PdfHtmlDocClose(IntPtr obj)
+      {
+        if (Util.Is64BitProcess()) return PdfHtmlDocClose64(obj);
+        else return PdfHtmlDocClose32(obj);
+      }
+      [DllImport("pdf_to_html.dll", EntryPoint="PdfHtmlDocSave", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern byte PdfHtmlDocSave32(IntPtr obj, string _path, IntPtr _params, [MarshalAs(UnmanagedType.FunctionPtr)]PdfCancelProc _cancel_proc, IntPtr _cancel_data);
+      [DllImport("pdf_to_html64.dll", EntryPoint="PdfHtmlDocSave", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern byte PdfHtmlDocSave64(IntPtr obj, string _path, IntPtr _params, [MarshalAs(UnmanagedType.FunctionPtr)]PdfCancelProc _cancel_proc, IntPtr _cancel_data);
+      internal static byte PdfHtmlDocSave(IntPtr obj, string _path, IntPtr _params, [MarshalAs(UnmanagedType.FunctionPtr)]PdfCancelProc _cancel_proc, IntPtr _cancel_data)
+      {
+        if (Util.Is64BitProcess()) return PdfHtmlDocSave64(obj, _path, _params, _cancel_proc, _cancel_data);
+        else return PdfHtmlDocSave32(obj, _path, _params, _cancel_proc, _cancel_data);
+      }
+      [DllImport("pdf_to_html.dll", EntryPoint="PdfHtmlDocSaveDocHtml", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern byte PdfHtmlDocSaveDocHtml32(IntPtr obj, IntPtr _stream, IntPtr _params, [MarshalAs(UnmanagedType.FunctionPtr)]PdfCancelProc _cancel_proc, IntPtr _cancel_data);
+      [DllImport("pdf_to_html64.dll", EntryPoint="PdfHtmlDocSaveDocHtml", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern byte PdfHtmlDocSaveDocHtml64(IntPtr obj, IntPtr _stream, IntPtr _params, [MarshalAs(UnmanagedType.FunctionPtr)]PdfCancelProc _cancel_proc, IntPtr _cancel_data);
+      internal static byte PdfHtmlDocSaveDocHtml(IntPtr obj, IntPtr _stream, IntPtr _params, [MarshalAs(UnmanagedType.FunctionPtr)]PdfCancelProc _cancel_proc, IntPtr _cancel_data)
+      {
+        if (Util.Is64BitProcess()) return PdfHtmlDocSaveDocHtml64(obj, _stream, _params, _cancel_proc, _cancel_data);
+        else return PdfHtmlDocSaveDocHtml32(obj, _stream, _params, _cancel_proc, _cancel_data);
+      }
+      [DllImport("pdf_to_html.dll", EntryPoint="PdfHtmlDocSavePageHtml", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern byte PdfHtmlDocSavePageHtml32(IntPtr obj, IntPtr _stream, IntPtr _params, int _page_num, [MarshalAs(UnmanagedType.FunctionPtr)]PdfCancelProc _cancel_proc, IntPtr _cancel_data);
+      [DllImport("pdf_to_html64.dll", EntryPoint="PdfHtmlDocSavePageHtml", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern byte PdfHtmlDocSavePageHtml64(IntPtr obj, IntPtr _stream, IntPtr _params, int _page_num, [MarshalAs(UnmanagedType.FunctionPtr)]PdfCancelProc _cancel_proc, IntPtr _cancel_data);
+      internal static byte PdfHtmlDocSavePageHtml(IntPtr obj, IntPtr _stream, IntPtr _params, int _page_num, [MarshalAs(UnmanagedType.FunctionPtr)]PdfCancelProc _cancel_proc, IntPtr _cancel_data)
+      {
+        if (Util.Is64BitProcess()) return PdfHtmlDocSavePageHtml64(obj, _stream, _params, _page_num, _cancel_proc, _cancel_data);
+        else return PdfHtmlDocSavePageHtml32(obj, _stream, _params, _page_num, _cancel_proc, _cancel_data);
+      }
     }
   }
 }

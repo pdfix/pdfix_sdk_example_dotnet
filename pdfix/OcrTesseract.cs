@@ -1,7 +1,7 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2016 PDFix. All Rights Reserved.
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2019 PDFix (http://pdfix.net). All Rights Reserved.
 // This file was generated automatically
-////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 using System;
 using System.Runtime.InteropServices;
 using PDFixSDK.Pdfix;
@@ -34,6 +34,10 @@ namespace PDFixSDK {
       }
       static internal void PtrWritePtr(IntPtr ptr, IntPtr value)
       {
+      }
+      static internal bool Is64BitProcess()
+      {
+        return IntPtr.Size == 8;
       }
     }
     public class OcrTesseractBase
@@ -77,55 +81,6 @@ namespace PDFixSDK {
       kOcrTesseractDefault = 3,
     }
 
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct OcrTesseractParamsInt
-    {
-      public int flags;
-      public PdfDevRectInt clip_rect;
-      public int page_seg;
-      public int engine;
-      public double zoom;
-      public int rotate;
-    }
-    public struct OcrTesseractParams
-    {
-      public int flags;
-      public PdfDevRect clip_rect;
-      public OcrTesseractPageSegType page_seg;
-      public OcrTesseractEngineType engine;
-      public double zoom;
-      public PdfRotate rotate;
-      public OcrTesseractParams(int _flags, PdfDevRect _clip_rect, OcrTesseractPageSegType _page_seg, OcrTesseractEngineType _engine, double _zoom, PdfRotate _rotate)
-      {
-        flags = _flags;
-        clip_rect = _clip_rect;
-        page_seg = _page_seg;
-        engine = _engine;
-        zoom = _zoom;
-        rotate = _rotate;
-      }
-      internal OcrTesseractParamsInt GetIntStruct()
-      {
-        OcrTesseractParamsInt result = new OcrTesseractParamsInt();
-        result.flags = flags;
-        result.clip_rect = (PdfDevRectInt)clip_rect.GetIntStruct();
-        result.page_seg = (int)page_seg;
-        result.engine = (int)engine;
-        result.zoom = zoom;
-        result.rotate = (int)rotate;
-        return result;
-      }
-      internal void SetIntStruct(OcrTesseractParamsInt inStruct)
-      {
-        flags = inStruct.flags;
-        clip_rect = new PdfDevRect();
-        clip_rect.SetIntStruct(inStruct.clip_rect);
-        page_seg = (OcrTesseractPageSegType)inStruct.page_seg;
-        engine = (OcrTesseractEngineType)inStruct.engine;
-        zoom = inStruct.zoom;
-        rotate = (PdfRotate)inStruct.rotate;
-      }
-    }
 
 
     public class OcrTesseract : PdfixPlugin    {
@@ -136,32 +91,45 @@ namespace PDFixSDK {
       public const int kErrorOcrTesseractMissingPageImage = 2004;
       public const int kErrorOcrTesseractProcessDoc = 2005;
       public const int kErrorOcrTesseractProcessPage = 2006;
-      public const int kOcrNone = 0x00;
-      public const int kOcrImages = 0x0001;
+      public const int kErrorOcrTesseractIteratePage = 2007;
+      public const int kErrorOcrTesseractMissingFont = 2008;
 
       public OcrTesseract() : base(IntPtr.Zero)
       {
         m_obj = GetOcrTesseract();
       }
-      [DllImport("ocr_tesseract.dll", CharSet = CharSet.Unicode)]
-      internal static extern IntPtr GetOcrTesseract();
+      [DllImport("ocr_tesseract.dll", EntryPoint="GetOcrTesseract", CharSet = CharSet.Unicode)]
+      internal static extern IntPtr GetOcrTesseract32();
+      [DllImport("ocr_tesseract64.dll", EntryPoint="GetOcrTesseract", CharSet = CharSet.Unicode)]
+      internal static extern IntPtr GetOcrTesseract64();
+      internal static IntPtr GetOcrTesseract()
+      {
+        if (Util.Is64BitProcess()) return GetOcrTesseract64();
+        else return GetOcrTesseract32();
+      }
       public OcrTesseract(IntPtr obj) : base(obj) { }
       public bool SetLanguage(string _lang)
       {
         CheckBaseObj();
-        bool ret = OcrTesseractSetLanguage(m_obj, _lang);
-        return ret;
+        byte ret = OcrTesseractSetLanguage(m_obj, _lang);
+        return ret != 0;
       }
-      public bool SetData(string _path)
+      public bool SetDataPath(string _path)
       {
         CheckBaseObj();
-        bool ret = OcrTesseractSetData(m_obj, _path);
-        return ret;
+        byte ret = OcrTesseractSetDataPath(m_obj, _path);
+        return ret != 0;
+      }
+      public bool SetEngine(OcrTesseractEngineType _engine)
+      {
+        CheckBaseObj();
+        byte ret = OcrTesseractSetEngine(m_obj, (int)_engine);
+        return ret != 0;
       }
       public TesseractDoc OpenOcrDoc(PdfDoc _pdDoc)
       {
         CheckBaseObj();
-        IntPtr ret = OcrTesseractOpenOcrDoc(m_obj, _pdDoc.m_obj);
+        IntPtr ret = OcrTesseractOpenOcrDoc(m_obj, _pdDoc == null ? IntPtr.Zero : _pdDoc.m_obj);
         if (ret != IntPtr.Zero)
         {
           return new TesseractDoc(ret);
@@ -169,12 +137,42 @@ namespace PDFixSDK {
         return null;
       }
 
-      [DllImport("ocr_tesseract.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern bool OcrTesseractSetLanguage(IntPtr obj, string _lang);
-      [DllImport("ocr_tesseract.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern bool OcrTesseractSetData(IntPtr obj, string _path);
-      [DllImport("ocr_tesseract.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern IntPtr OcrTesseractOpenOcrDoc(IntPtr obj, IntPtr _pdDoc);
+      [DllImport("ocr_tesseract.dll", EntryPoint="OcrTesseractSetLanguage", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern byte OcrTesseractSetLanguage32(IntPtr obj, string _lang);
+      [DllImport("ocr_tesseract64.dll", EntryPoint="OcrTesseractSetLanguage", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern byte OcrTesseractSetLanguage64(IntPtr obj, string _lang);
+      internal static byte OcrTesseractSetLanguage(IntPtr obj, string _lang)
+      {
+        if (Util.Is64BitProcess()) return OcrTesseractSetLanguage64(obj, _lang);
+        else return OcrTesseractSetLanguage32(obj, _lang);
+      }
+      [DllImport("ocr_tesseract.dll", EntryPoint="OcrTesseractSetDataPath", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern byte OcrTesseractSetDataPath32(IntPtr obj, string _path);
+      [DllImport("ocr_tesseract64.dll", EntryPoint="OcrTesseractSetDataPath", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern byte OcrTesseractSetDataPath64(IntPtr obj, string _path);
+      internal static byte OcrTesseractSetDataPath(IntPtr obj, string _path)
+      {
+        if (Util.Is64BitProcess()) return OcrTesseractSetDataPath64(obj, _path);
+        else return OcrTesseractSetDataPath32(obj, _path);
+      }
+      [DllImport("ocr_tesseract.dll", EntryPoint="OcrTesseractSetEngine", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern byte OcrTesseractSetEngine32(IntPtr obj, int _engine);
+      [DllImport("ocr_tesseract64.dll", EntryPoint="OcrTesseractSetEngine", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern byte OcrTesseractSetEngine64(IntPtr obj, int _engine);
+      internal static byte OcrTesseractSetEngine(IntPtr obj, int _engine)
+      {
+        if (Util.Is64BitProcess()) return OcrTesseractSetEngine64(obj, _engine);
+        else return OcrTesseractSetEngine32(obj, _engine);
+      }
+      [DllImport("ocr_tesseract.dll", EntryPoint="OcrTesseractOpenOcrDoc", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern IntPtr OcrTesseractOpenOcrDoc32(IntPtr obj, IntPtr _pdDoc);
+      [DllImport("ocr_tesseract64.dll", EntryPoint="OcrTesseractOpenOcrDoc", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern IntPtr OcrTesseractOpenOcrDoc64(IntPtr obj, IntPtr _pdDoc);
+      internal static IntPtr OcrTesseractOpenOcrDoc(IntPtr obj, IntPtr _pdDoc)
+      {
+        if (Util.Is64BitProcess()) return OcrTesseractOpenOcrDoc64(obj, _pdDoc);
+        else return OcrTesseractOpenOcrDoc32(obj, _pdDoc);
+      }
     }
     public class TesseractDoc : OcrTesseractBase
     {
@@ -182,25 +180,39 @@ namespace PDFixSDK {
       public bool Close()
       {
         CheckBaseObj();
-        bool ret = TesseractDocClose(m_obj);
-        return ret;
+        byte ret = TesseractDocClose(m_obj);
+        return ret != 0;
       }
-      public bool Save(string _path, OcrTesseractParams _params, PdfCancelProc _cancel_proc, IntPtr _cancel_data)
+      public bool OcrImageToPage(PsImage _image, PdfMatrix _matrix, PdfPage _page, PdfCancelProc _cancel_proc, IntPtr _cancel_data)
       {
         CheckBaseObj();
-        OcrTesseractParamsInt _paramsInt = _params.GetIntStruct();
-        IntPtr _params_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(OcrTesseractParamsInt)));
-        Marshal.StructureToPtr(_paramsInt, _params_ptr, true);
-        bool ret = TesseractDocSave(m_obj, _path, _params_ptr, _cancel_proc, _cancel_data);
-        Marshal.FreeHGlobal(_params_ptr);
-        _params_ptr = IntPtr.Zero;
-        return ret;
+        PdfMatrixInt _matrixInt = _matrix.GetIntStruct();
+        IntPtr _matrix_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(PdfMatrixInt)));
+        Marshal.StructureToPtr(_matrixInt, _matrix_ptr, true);
+        byte ret = TesseractDocOcrImageToPage(m_obj, _image == null ? IntPtr.Zero : _image.m_obj, _matrix_ptr, _page == null ? IntPtr.Zero : _page.m_obj, _cancel_proc, _cancel_data);
+        Marshal.FreeHGlobal(_matrix_ptr);
+        _matrix_ptr = IntPtr.Zero;
+        return ret != 0;
       }
 
-      [DllImport("ocr_tesseract.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern bool TesseractDocClose(IntPtr obj);
-      [DllImport("ocr_tesseract.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-      internal static extern bool TesseractDocSave(IntPtr obj, string _path, IntPtr _params, [MarshalAs(UnmanagedType.FunctionPtr)]PdfCancelProc _cancel_proc, IntPtr _cancel_data);
+      [DllImport("ocr_tesseract.dll", EntryPoint="TesseractDocClose", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern byte TesseractDocClose32(IntPtr obj);
+      [DllImport("ocr_tesseract64.dll", EntryPoint="TesseractDocClose", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern byte TesseractDocClose64(IntPtr obj);
+      internal static byte TesseractDocClose(IntPtr obj)
+      {
+        if (Util.Is64BitProcess()) return TesseractDocClose64(obj);
+        else return TesseractDocClose32(obj);
+      }
+      [DllImport("ocr_tesseract.dll", EntryPoint="TesseractDocOcrImageToPage", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern byte TesseractDocOcrImageToPage32(IntPtr obj, IntPtr _image, IntPtr _matrix, IntPtr _page, [MarshalAs(UnmanagedType.FunctionPtr)]PdfCancelProc _cancel_proc, IntPtr _cancel_data);
+      [DllImport("ocr_tesseract64.dll", EntryPoint="TesseractDocOcrImageToPage", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+      internal static extern byte TesseractDocOcrImageToPage64(IntPtr obj, IntPtr _image, IntPtr _matrix, IntPtr _page, [MarshalAs(UnmanagedType.FunctionPtr)]PdfCancelProc _cancel_proc, IntPtr _cancel_data);
+      internal static byte TesseractDocOcrImageToPage(IntPtr obj, IntPtr _image, IntPtr _matrix, IntPtr _page, [MarshalAs(UnmanagedType.FunctionPtr)]PdfCancelProc _cancel_proc, IntPtr _cancel_data)
+      {
+        if (Util.Is64BitProcess()) return TesseractDocOcrImageToPage64(obj, _image, _matrix, _page, _cancel_proc, _cancel_data);
+        else return TesseractDocOcrImageToPage32(obj, _image, _matrix, _page, _cancel_proc, _cancel_data);
+      }
     }
   }
 }

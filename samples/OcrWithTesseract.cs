@@ -30,8 +30,7 @@ namespace PDFix.App.Module
             String openPath,                            // source PDF document
             String savePath,                            // output PDF document
             String dataPath,                            // path to OCR data
-            String language,                            // default OCR language
-            OcrTesseractParams ocrParams                // OCR params
+            String language                             // default OCR language
             )
         {
             Pdfix pdfix = new Pdfix();
@@ -52,16 +51,16 @@ namespace PDFix.App.Module
             if (doc == null)
                 throw new Exception(pdfix.GetError());
 
-            ocrParams.zoom = 4;
             ocr.SetLanguage(language);
-            ocr.SetData(dataPath);
+            ocr.SetDataPath(dataPath);
 
             TesseractDoc ocrDoc = ocr.OpenOcrDoc(doc);
             if (ocrDoc == null)
                 throw new Exception(pdfix.GetError());
 
-            if (!ocrDoc.Save(savePath, ocrParams, null, IntPtr.Zero))
-                throw new Exception(pdfix.GetError());
+
+            //if (!ocrDoc.Save(savePath, ocrParams, null, IntPtr.Zero))
+            //    throw new Exception(pdfix.GetError());
 
             ocrDoc.Close();
             doc.Close();
