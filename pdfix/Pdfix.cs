@@ -619,6 +619,7 @@ namespace PDFixSDK {
       public int accept_tags;
       public int embed_fonts;
       public int subset_fonts;
+      public int create_bookmarks;
     }
     public struct PdfPageRangeParams
     {
@@ -1315,11 +1316,13 @@ namespace PDFixSDK {
       public int accept_tags;
       public int embed_fonts;
       public int subset_fonts;
-      public PdfAccessibleParams(int _accept_tags, int _embed_fonts, int _subset_fonts)
+      public int create_bookmarks;
+      public PdfAccessibleParams(int _accept_tags, int _embed_fonts, int _subset_fonts, int _create_bookmarks)
       {
         accept_tags = _accept_tags;
         embed_fonts = _embed_fonts;
         subset_fonts = _subset_fonts;
+        create_bookmarks = _create_bookmarks;
       }
       internal PdfAccessibleParamsInt GetIntStruct()
       {
@@ -1327,6 +1330,7 @@ namespace PDFixSDK {
         result.accept_tags = accept_tags;
         result.embed_fonts = embed_fonts;
         result.subset_fonts = subset_fonts;
+        result.create_bookmarks = create_bookmarks;
         return result;
       }
       internal void SetIntStruct(PdfAccessibleParamsInt inStruct)
@@ -1334,6 +1338,7 @@ namespace PDFixSDK {
         accept_tags = inStruct.accept_tags;
         embed_fonts = inStruct.embed_fonts;
         subset_fonts = inStruct.subset_fonts;
+        create_bookmarks = inStruct.create_bookmarks;
       }
     }
 
