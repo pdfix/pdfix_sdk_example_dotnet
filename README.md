@@ -48,7 +48,7 @@ Clone the repository:
 
 ## Run the example
 
-From pdfix_sdk_exmple_net dir:
+From pdfix_sdk_exmple_dotnet dir:
 
 ### .Net Framework
  `./bin/Release/net48/example`  
