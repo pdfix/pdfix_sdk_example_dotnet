@@ -1,55 +1,63 @@
-
-
-
-# PDFix SDK
-A multi-platform PDF Library SDK.
+# PDFix SDK example .Net Framework and .Net Core
+Example project demonstrating the capabilities of PDFix SDK written in C#
+language.
 
 ## Description
 
-Our PDF library analyses the key components of the PDF and make it easily available for you. With the ability to sign PDF's with both eSignatures and Digital Signatures we have your digital transactions covered.
+Our PDF library analyses the key components of the PDF and make it easily
+available for you. With the ability to sign PDF's with both eSignatures and
+Digital Signatures we have your digital transactions covered.  
+We turn your simple PDF into a fully responsive document with semantic content
+and logical reading order built for you. You can search texts, you can save all
+images, you can export table values into your database or you can use exported
+elements for conversions – to HTML, JSON, Word, Excel, etc.  
+PDF form filling using AcroForm is an important part of many workflows. It
+allows data entry directly on print ready media with ability to import, export,
+submit or email data for further processing.  
+Try our autotag feature that recognises all important structures in your
+documents like tables, lists, reading order.
 
-We turn your simple PDF into a fully responsive document with semantic content and logical reading order built for you. You can search texts, you can save all images, you can export table values into your database or you can use exported elements for conversions – to HTML, JSON, Word, Excel, etc.
+## Code integration
+```cs
+using PDFixSDK.Pdfix;
 
-PDF form filling using AcroForm is an important part of many workflows. It allows data entry directly on print ready media with ability to import, export, submit or email data for further processing.
+static void Main()
+    {
+        Pdfix pdfix = new Pdfix();
+        if (pdfix == null)
+            throw new Exception("Pdfix initialization fail");
+            
+        // your code ...
+        
+        pdfix.Destroy();
+    }
+```
 
-Try our autotag feature that recognises all important structures in your documents like tables, lists, reading order.
+## Prerequisites
+
+### Windows
+- MS Visual Studio 2017 or latest
+- PDFix SDK Nuget packages [Download from here](https://www.nuget.org/packages/PDFix.SDK/) or from Nuget package manager in Visual Studio
+
+## Download
+Clone the repository:  
+`git clone https://github.com/pdfix/pdfix_sdk_example_dotnet`  
+
+...or download as .zip:  
+[Download as .zip](https://github.com/pdfix/pdfix_sdk_example_dotnet/archive/master.zip)
+
+## Run the example
+
+From pdfix_sdk_exmple_net dir:
+
+### .Net Framework
+ `./bin/Release/net48/example`  
+
+### .Net Core
+ `./bin/Release/netcoreapp3.1/example`  
 
 ## Documentation
 For complete SDK documentation see the [PDFix website](https://pdfix.net).
-
-## Features
-
-* Standard PDF FeaturesHTML5 canvas-like API
-  * Document Metadata (Author, Title, etc.)
-  * Comments / Reviews
-  * Watermarks / Stamps
-  * Links / Actions
-  * Bookmarks
-  * Convert to HTML
-  * Extract, insert and update data from Form fields
-  * Printing
-  * OCR
-  * Access to low-level objects from PDF document (coming soon)
-  * Page manipulation (coming soon)
-  * Digital Signature Support
-  * eSignature Support
-  * Time Stamp Support
-* PDF Forms to HTML Form conversion
-* Logical Content Extraction
-  * PDF to HTML Conversion
-  * PDF to JSON Conversion
-  * PDF to XML Conversion
-* PDF Accessibility
-  * Add Tags to PDF
-  * Read and Edit document structure tree
-  * Edit reading order
-  * PDF to PDF/UA
-
-## Installation on Windows, MacOS, Linux
-Copy shared libraries from the bin folder in downloaded PDFix SDK package (https://pdfix.net/download) into the build folder same as the the executable. For 64-bit environment use files with \*64.* suffix.
-* Windows: pdfix.dll, pdf_to_html.dll, ocr_tesseract.dll
-* MacOS: libpdfix.dylib, libpdf_to_html.dylib, libocr_tesseract.dylib
-* Linux: libpdfix.so, libpdf_to_html.so, libocr_tesseract.so
 
 ## Have a question? Need help?
 Let us know and we’ll get back to you. Write us to support@pdfix.net or fill the
