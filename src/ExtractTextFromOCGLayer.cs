@@ -5,7 +5,6 @@
 
 using System;
 using PDFixSDK.Pdfix;
-using System.IO;
 using System.Collections.Generic;
 
 namespace PDFix.App.Module

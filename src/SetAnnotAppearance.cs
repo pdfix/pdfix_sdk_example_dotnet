@@ -12,8 +12,6 @@ namespace PDFix.App.Module
     class SetAnnotAppearance
     {
         public static void Run(
-            String email,                               // authorization email   
-            String licenseKey,                          // authorization license key
             String openPath,                            // source PDF document
             String savePath,                            // output PDF document
             String imgPath                              // watermark to apply
@@ -22,10 +20,6 @@ namespace PDFix.App.Module
             Pdfix pdfix = new Pdfix();
             if (pdfix == null)
                 throw new Exception("Pdfix initialization fail");
-
-            // authorization
-            if (email.Length != 0 && !pdfix.GetAccountAuthorization().Authorize(email, licenseKey))
-                throw new Exception(pdfix.GetError());
 
             PdfDoc doc = pdfix.OpenDoc(openPath, "");
             if (doc == null)

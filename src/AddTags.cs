@@ -11,8 +11,6 @@ namespace PDFix.App.Module
     class AddTags
     {
         public static void Run(
-            String email,                       // authorization email   
-            String licenseKey,                  // authorization license key
             String openPath,                    // source PDF document
             String savePath,                    // output PDF document
             String configPath                   // configuration file
@@ -21,9 +19,6 @@ namespace PDFix.App.Module
             Pdfix pdfix = new Pdfix();
             if (pdfix == null)
                 throw new Exception("Pdfix initialization fail");
-
-            if (!pdfix.GetAccountAuthorization().Authorize(email, licenseKey))
-                throw new Exception(pdfix.GetError());
 
             PdfDoc doc = pdfix.OpenDoc(openPath, "");
             if (doc == null)

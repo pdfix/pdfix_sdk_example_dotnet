@@ -63,8 +63,6 @@ namespace PDFix.App.Module
         }
 
         public static void Run(
-            String email,                               // authorization email   
-            String licenseKey,                          // authorization license key
             String openPath,                            // source PDF document
             String savePath                             // dest PDF document
             )
@@ -72,9 +70,6 @@ namespace PDFix.App.Module
             pdfix = new Pdfix();
             if (pdfix == null)
                 throw new Exception("Pdfix initialization fail");
-
-            if (!pdfix.GetAccountAuthorization().Authorize(email, licenseKey))
-                throw new Exception(pdfix.GetErrorType().ToString());
 
             PdfDoc doc = pdfix.OpenDoc(openPath, "");
             if (doc == null)

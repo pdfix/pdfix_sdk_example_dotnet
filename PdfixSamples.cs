@@ -12,17 +12,12 @@ namespace PDFix.App.Module
             String outputPath = Utils.GetAbsolutePath("output");
             String configPath = "";
 
-            String email = PdfixAppConfig.email;
-            String licenseKey = PdfixAppConfig.key;
-
             System.IO.Directory.CreateDirectory(outputPath);
 
             //////////////////////////////////////////////////////////////////////
             // Samples Free version - no authorization
             //////////////////////////////////////////////////////////////////////
-            Console.WriteLine("Initialization Sample");
-            Initialization.Run(email, licenseKey);
-
+         
             Console.WriteLine("ParsePdsObjects Sample");
             ParsePdsObjects.Run(inputPath + "test.pdf");
 
@@ -43,28 +38,28 @@ namespace PDFix.App.Module
             ////////////////////////////////////////////////////////////////////////
 
             Console.WriteLine("AddComment Sample");
-            AddComment.Run(email, licenseKey, inputPath + "test.pdf", outputPath + "/AddComment.pdf");
+            AddComment.Run(inputPath + "test.pdf", outputPath + "/AddComment.pdf");
 
             Console.WriteLine("Set Annot Appearance Sample");
-            SetAnnotAppearance.Run(email, licenseKey, inputPath + "test.pdf",
+            SetAnnotAppearance.Run(inputPath + "test.pdf",
               outputPath + "/SetAnnotAppearance.pdf",
               inputPath + "/watermark.png");
 
             Console.WriteLine("AddTags Sample");
-            AddTags.Run(email, licenseKey, inputPath + "test.pdf",
+            AddTags.Run(inputPath + "test.pdf",
               outputPath + "/AddTags.pdf", configPath);
 
             //Console.WriteLine("Document Preflight Sample");
-            //DocumentPreflight.Run(email, licenseKey, inputPath + "test.pdf");
+            //DocumentPreflight.Run(inputPath + "test.pdf");
 
             Console.WriteLine("AddWatermark Sample");
-            AddWatermark.Run(email, licenseKey, inputPath + "test.pdf",
+            AddWatermark.Run(inputPath + "test.pdf",
               outputPath + "/AddWatermark.pdf",
               inputPath + "/watermark.png",
               new PdfWatermarkParams());
 
             Console.WriteLine("ConvertToHtml Sample");
-            ConvertToHtml.Run(email, licenseKey, inputPath + "test.pdf",
+            ConvertToHtml.Run(inputPath + "test.pdf",
               outputPath + "/index.html",
               configPath,
               new PdfHtmlParams()
@@ -72,7 +67,7 @@ namespace PDFix.App.Module
                 flags = PdfToHtml.kHtmlNoExternalCSS | PdfToHtml.kHtmlNoExternalJS | PdfToHtml.kHtmlNoExternalIMG | PdfToHtml.kHtmlNoExternalFONT
               });
 
-            ConvertToHtmlByPages.Run(email, licenseKey, inputPath + "test.pdf",
+            ConvertToHtmlByPages.Run(inputPath + "test.pdf",
               configPath,
               new PdfHtmlParams()
               {
@@ -80,29 +75,29 @@ namespace PDFix.App.Module
               });
 
             Console.WriteLine("DigitalSignature Sample");
-            DigitalSignature.Run(email, licenseKey, inputPath + "test.pdf",
+            DigitalSignature.Run(inputPath + "test.pdf",
               outputPath + "/DigitalSignature.pdf",
               inputPath + "/test.pfx", "TEST_PASSWORD");
 
             Console.WriteLine("ExtractTables Sample");
-            ExtractTables.Run(email, licenseKey, inputPath + "test.pdf",
+            ExtractTables.Run(inputPath + "test.pdf",
               outputPath,
               configPath);
 
             Console.WriteLine("ExtractText Sample");
-            ExtractText.Run(email, licenseKey, inputPath + "test.pdf");
+            ExtractText.Run(inputPath + "test.pdf");
 
             Console.WriteLine("ExportImages Sample");
-            ExportImages.Run(email, licenseKey, inputPath + "test.pdf", 
+            ExportImages.Run(inputPath + "test.pdf", 
               outputPath);
 
             Console.WriteLine("FlattenAnnots Sample");
-            FlattenAnnots.Run(email, licenseKey, inputPath + "test.pdf",
+            FlattenAnnots.Run(inputPath + "test.pdf",
               outputPath + "/FlattenAnnots.pdf",
               new PdfFlattenAnnotsParams());
 
             Console.WriteLine("MakeAccessible Sample");
-            MakeAccessible.Run(email, licenseKey, inputPath + "test.pdf",
+            MakeAccessible.Run(inputPath + "test.pdf",
               outputPath + "/MakeAccessible.pdf",
               true,
               "en-us",
@@ -110,40 +105,40 @@ namespace PDFix.App.Module
               configPath);
 
             Console.WriteLine("TagsReadStructTree sample");
-            TagsReadStructTree.Run(email, licenseKey, inputPath + "test.pdf");
+            TagsReadStructTree.Run(inputPath + "test.pdf");
 
             Console.WriteLine("TagEditImageAltText");
-            TagEditImageAltText.Run(email, licenseKey, inputPath + "test.pdf",
+            TagEditImageAltText.Run(inputPath + "test.pdf",
               outputPath + "/TagEditImageAltText.pdf");
 
             Console.WriteLine("TagEditStructureTree Sample");
-            TagEditStructureTree.Run(email, licenseKey, inputPath + "test.pdf",
+            TagEditStructureTree.Run(inputPath + "test.pdf",
               outputPath + "/TagEditStructureTree.pdf");
 
             Console.WriteLine("TagsReadingOrder sample");
-            TagsReadingOrder.Run(email, licenseKey, inputPath + "test.pdf",
+            TagsReadingOrder.Run(inputPath + "test.pdf",
               outputPath + "/TagsReadingOrder.pdf");
 
             Console.WriteLine("TagTableAsFigure sample");
-            TagTableAsFigure.Run(email, licenseKey, inputPath + "test.pdf",
+            TagTableAsFigure.Run(inputPath + "test.pdf",
               outputPath + "/TagTableAsFigure.pdf");
 
             Console.WriteLine("TagHeadings Sample");
-            TagHeadings.Run(email, licenseKey, inputPath + "test.pdf",
+            TagHeadings.Run(inputPath + "test.pdf",
               outputPath + "/TagHeadings.pdf");
 
             Console.WriteLine("TagAsArtifact Sample");
-            TagAsArtifact.Run(email, licenseKey, inputPath + "test.pdf",
+            TagAsArtifact.Run(inputPath + "test.pdf",
               outputPath + "/TagAsArtifact.pdf");
 
             //Console.WriteLine("OcrWithTesseract Sample");
-            //OcrWithTesseract.Run(email, licenseKey, inputPath + "test.pdf",
+            //OcrWithTesseract.Run(inputPath + "test.pdf",
             //  outputPath + "OcrWithTesseract.pdf",
             //  inputPath + "/tesseract/tessdata",
             //  "eng");
 
             Console.WriteLine("ThreadSafePdfix Sample");
-            ThreadSafePdfix.Run(email, licenseKey, inputPath + "test.pdf");
+            ThreadSafePdfix.Run(inputPath + "test.pdf");
         }
     }
 }
