@@ -49,8 +49,8 @@ namespace PDFix.App.Module
             AddTags.Run(inputPath + "test.pdf",
               outputPath + "/AddTags.pdf", configPath);
 
-            //Console.WriteLine("Document Preflight Sample");
-            //DocumentPreflight.Run(inputPath + "test.pdf");
+            Console.WriteLine("Document Preflight Sample");
+            DocumentPreflight.Run(inputPath + "test.pdf", "");
 
             Console.WriteLine("AddWatermark Sample");
             AddWatermark.Run(inputPath + "test.pdf",

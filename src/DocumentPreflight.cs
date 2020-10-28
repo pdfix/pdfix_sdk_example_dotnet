@@ -11,7 +11,8 @@ namespace PDFix.App.Module
     class DocumentPreflight
     {
         public static void Run(
-            String openPath                     // source PDF document
+            String openPath,                    // source PDF document
+            String configPath
             )
         {
             Pdfix pdfix = new Pdfix();
@@ -26,7 +27,18 @@ namespace PDFix.App.Module
             if (doc_preflight == null)
                 throw new Exception(pdfix.GetError());
 
-            // add some reference pages to preflight
+            // load user-defined confguration
+            PsFileStream stm = pdfix.CreateFileStream(configPath, PsFileMode.kPsReadOnly);
+            if (stm != null)
+            {
+                var doc_prelight = doc.GetTemplate();
+                if (doc_prelight == null)
+                    throw new Exception(pdfix.GetError());
+                doc_prelight.LoadFromStream(stm, PsDataFormat.kDataFormatJson);
+                stm.Destroy();
+            }
+
+            // add reference pages to preflight
             for (var i = 0; i < doc.GetNumPages(); i++)
             {
                 if (!doc_preflight.AddPage(i, null, IntPtr.Zero))
@@ -37,7 +49,14 @@ namespace PDFix.App.Module
             if (!doc_preflight.Update(null, IntPtr.Zero))
                 throw new Exception(pdfix.GetError());
 
-            // check the document preflight
+            // save preflight to stream if needed
+            var preflight_stm = pdfix.CreateMemStream();
+            doc_preflight.SaveToStream(preflight_stm, PsDataFormat.kDataFormatJson);
+            byte[] bytes = new byte[preflight_stm.GetSize()];
+            preflight_stm.Read(0, bytes);
+            System.Console.Write(System.Text.Encoding.UTF8.GetString(bytes));
+
+            // output some document preflight values from the config
             for (var i = 0; i < doc.GetNumPages(); i++)
             {
                 Console.WriteLine("Preflight results for page " + i.ToString());
