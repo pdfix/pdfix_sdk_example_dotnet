@@ -27,12 +27,11 @@ namespace PDFix.App.Module
                 if (obj.GetObjectType() == PdfPageObjectType.kPdsPageForm)
                 {
                     var form_obj = (PdsForm)obj;
-                    var content = form_obj.AcquireContent();
+                    var content = form_obj.GetContent();
                     for (var i = 0; i < content.GetNumObjects(); i++)
                     {
                         bboxes.AddRange(GetMcidBBoxes(content.GetObject(i), mcid));
                     }
-                    content.Release();
                 }
             }
             return bboxes;

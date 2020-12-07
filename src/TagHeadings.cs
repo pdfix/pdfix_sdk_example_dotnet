@@ -35,7 +35,7 @@ namespace PDFix.App.Module
             {
                 // search for the text object inside of the form XObject
                 PdsForm form = (PdsForm)page_object;
-                var content = form.AcquireContent();
+                var content = form.GetContent();
                 for (int i = 0; i < content.GetNumObjects(); i++)
                 {
                     var ts = GetPageObjectTextState(content.GetObject(i), mcid);

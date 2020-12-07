@@ -21,7 +21,7 @@ namespace PDFix.App.Module
                 case PdfPageObjectType.kPdsPageForm:
                     {
                         var form = (PdsForm)obj;
-                        var content = form.AcquireContent();
+                        var content = form.GetContent();
                         for (int i = 0; i < content.GetNumObjects(); i++)
                             ProcessPageObject(page, content.GetObject(i), savePath);
                     }
