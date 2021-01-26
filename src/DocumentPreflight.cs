@@ -51,7 +51,7 @@ namespace PDFix.App.Module
 
             // save preflight to stream if needed
             var preflight_stm = pdfix.CreateMemStream();
-            doc_preflight.SaveToStream(preflight_stm, PsDataFormat.kDataFormatJson);
+            doc_preflight.SaveToStream(preflight_stm, PsDataFormat.kDataFormatJson, Pdfix.kSaveUncompressed);
             byte[] bytes = new byte[preflight_stm.GetSize()];
             preflight_stm.Read(0, bytes);
             System.Console.Write(System.Text.Encoding.UTF8.GetString(bytes));
