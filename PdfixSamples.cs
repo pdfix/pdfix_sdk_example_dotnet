@@ -17,7 +17,10 @@ namespace PDFix.App.Module
             //////////////////////////////////////////////////////////////////////
             // Samples Free version - no authorization
             //////////////////////////////////////////////////////////////////////
-         
+
+            Console.WriteLine("OpenFileFromStream Sample");            
+            OpenFileFromStream.Run(inputPath + "test.pdf");
+
             Console.WriteLine("ParsePdsObjects Sample");
             ParsePdsObjects.Run(inputPath + "test.pdf");
 

@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace PDFix.App.Module.Public
+namespace PDFix.App.Module
 {
     class OpenFileFromStream
     {
