@@ -15,6 +15,9 @@ namespace PDFix.App.Module
 
             // open doc using file stream
             var fileStm = pdfix.CreateFileStream(open_file, PsFileMode.kPsReadOnly);
+            if (fileStm == null)
+                throw new Exception(pdfix.GetError());
+
             PdfDoc doc0 = pdfix.OpenDocFromStream(fileStm, "");
             if (doc0 == null)
                 throw new Exception(pdfix.GetError());
