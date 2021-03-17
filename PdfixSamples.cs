@@ -48,6 +48,11 @@ namespace PDFix.App.Module
               outputPath + "/SetAnnotAppearance.pdf",
               inputPath + "/watermark.png");
 
+            Console.WriteLine("Set Annot Custom Appearance Sample");
+            SetAnnotCustomAppearance.Run(inputPath + "test.pdf",
+              outputPath + "/SetAnnotCustomAppearance.pdf",
+              inputPath + "/watermark.png");
+
             Console.WriteLine("AddTags Sample");
             AddTags.Run(inputPath + "test.pdf",
               outputPath + "/AddTags.pdf", configPath);
