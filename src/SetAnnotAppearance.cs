@@ -55,14 +55,14 @@ namespace PDFix.App.Module
                 if (page_view == null)
                     throw new Exception(pdfix.GetError());
 
-                PdfDevRect dev_rect = new PdfDevRect()
+                // rect for the new annotation
+                PdfRect annot_rect = new PdfRect()
                 {
-                    left = page_view.GetDeviceWidth() / 3,
-                    right = page_view.GetDeviceWidth() / 2,
-                    bottom = page_view.GetDeviceHeight() / 3,
-                    top = page_view.GetDeviceHeight() / 2
+                    left = 100,
+                    right = 300,
+                    bottom = 100,
+                    top = 200
                 };
-                PdfRect annot_rect = page_view.RectToPage(dev_rect);
                 annot = page.AddNewAnnot(0, annot_rect, PdfAnnotSubtype.kAnnotStamp);
             }
 
