@@ -98,9 +98,9 @@ namespace PDFix.App.Module
             textState.font_size = 11;
             textState.color_state.fill_type = PdfFillType.kFillTypeSolid;
             var fill_color = colorSpace.CreateColor();
-            fill_color.SetValue(0, 0.5);
-            fill_color.SetValue(1, 0.5);
-            fill_color.SetValue(2, 0.5);
+            fill_color.SetValue(0, 0.5f);
+            fill_color.SetValue(1, 0.5f);
+            fill_color.SetValue(2, 0.5f);
             textState.color_state.fill_color = fill_color;
             textState.color_state.fill_opacity = 255;
             textState.color_state.stroke_type = PdfFillType.kFillTypeSolid;

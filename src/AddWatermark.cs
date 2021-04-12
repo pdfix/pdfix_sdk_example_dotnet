@@ -46,8 +46,8 @@ namespace PDFix.App.Module
             watermarkParams.page_range.page_range_spec = PdfPageRangeType.kEvenPagesOnly;
             watermarkParams.h_value = 10;
             watermarkParams.v_value = 10;
-            watermarkParams.scale = 0.5;
-            watermarkParams.opacity = 0.5;
+            watermarkParams.scale = 0.5f;
+            watermarkParams.opacity = 0.5f;
 
             if (!doc.AddWatermarkFromImage(watermarkParams, image_obj))
                 throw new Exception(pdfix.GetError());

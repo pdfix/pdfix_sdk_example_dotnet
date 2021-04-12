@@ -38,8 +38,8 @@ namespace PDFix.App.Module
             PdsDictionary annot_dict = doc.CreateDictObject(true);
             PdsArray color_array = annot_dict.PutArray("C");
             color_array.PutNumber(0, 1);
-            color_array.PutNumber(1, 0.33);
-            color_array.PutNumber(2, 0.25);
+            color_array.PutNumber(1, 0.33f);
+            color_array.PutNumber(2, 0.25f);
             annot_dict.PutString("Contents", "AutoTag_Sample_original.pdf");
             annot_dict.PutNumber("F", 28);
             annot_dict.PutString("Name", "Paperclip");

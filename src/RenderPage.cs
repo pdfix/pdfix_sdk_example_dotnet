@@ -29,7 +29,7 @@ namespace PDFix.App.Module
                 throw new Exception(pdfix.GetError());
 
             // prepare page view with zoom and rotation
-            var pageView = page.AcquirePageView(1.0, PdfRotate.kRotate0);
+            var pageView = page.AcquirePageView(1.0f, PdfRotate.kRotate0);
             if (pageView == null)
                 throw new Exception(pdfix.GetError());
 

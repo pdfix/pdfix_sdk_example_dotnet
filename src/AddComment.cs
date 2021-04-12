@@ -31,10 +31,10 @@ namespace PDFix.App.Module
 
             // place annotation to the middle of the page
             PdfRect annotRect = new PdfRect();
-            annotRect.left = (cropBox.right + cropBox.left) / 2.0 - 10;
-            annotRect.bottom = (cropBox.top + cropBox.bottom) / 2.0 - 10;
-            annotRect.right = (cropBox.right + cropBox.left) / 2.0 + 10;
-            annotRect.top = (cropBox.top + cropBox.bottom) / 2.0 + 10;
+            annotRect.left = (cropBox.right + cropBox.left) / 2.0f - 10;
+            annotRect.bottom = (cropBox.top + cropBox.bottom) / 2.0f - 10;
+            annotRect.right = (cropBox.right + cropBox.left) / 2.0f + 10;
+            annotRect.top = (cropBox.top + cropBox.bottom) / 2.0f + 10;
 
             PdfTextAnnot annot = page.AddNewTextAnnot(-1, annotRect);
             if (annot == null)
