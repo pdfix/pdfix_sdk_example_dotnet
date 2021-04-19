@@ -96,8 +96,7 @@ namespace PDFix.App.Module
 
             Console.WriteLine("FlattenAnnots Sample");
             FlattenAnnots.Run(inputPath + "test.pdf",
-              outputPath + "/FlattenAnnots.pdf",
-              new PdfFlattenAnnotsParams());
+              outputPath + "/FlattenAnnots.pdf");
 
             Console.WriteLine("MakeAccessible Sample");
             MakeAccessible.Run(inputPath + "test.pdf",
