@@ -43,9 +43,19 @@ namespace PDFix.App.Module
             Console.WriteLine("AddComment Sample");
             AddComment.Run(inputPath + "test.pdf", outputPath + "/AddComment.pdf");
 
+            Console.WriteLine("Add Attachment Annot Sample");
+            AddAttachmentAnnot.Run(inputPath + "test.pdf",
+              outputPath + "/AddAttachmentAnnot.pdf",
+              inputPath + "/AutoTag_Sample_original.pdf");
+
             Console.WriteLine("Set Annot Appearance Sample");
             SetAnnotAppearance.Run(inputPath + "test.pdf",
               outputPath + "/SetAnnotAppearance.pdf",
+              inputPath + "/watermark.png");
+
+            Console.WriteLine("Set Annot Custom Appearance Sample");
+            SetAnnotCustomAppearance.Run(inputPath + "test.pdf",
+              outputPath + "/SetAnnotCustomAppearance.pdf",
               inputPath + "/watermark.png");
 
             Console.WriteLine("AddTags Sample");
