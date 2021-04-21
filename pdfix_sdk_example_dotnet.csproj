@@ -65,9 +65,9 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="PDFix.OcrTesseract" Version="6.9.0" />
-    <PackageReference Include="PDFix.PdfToHtml" Version="6.9.0" />
-    <PackageReference Include="PDFix.SDK" Version="6.9.0" />
+    <PackageReference Include="PDFix.OcrTesseract" Version="6.10.0" />
+    <PackageReference Include="PDFix.PdfToHtml" Version="6.10.0" />
+    <PackageReference Include="PDFix.SDK" Version="6.10.0" />
   </ItemGroup>
 
 </Project>
