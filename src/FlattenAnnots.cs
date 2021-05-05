@@ -26,7 +26,7 @@ namespace PDFix.App.Module
             for (int i = 0; i < doc.GetNumPages(); i++)
             {
                 var page = doc.AcquirePage(i);
-                for (int j = page.GetNumAnnots() - 1; j >= 0; j++)
+                for (int j = page.GetNumAnnots() - 1; j >= 0; j--)
                 {
                     var annot = page.GetAnnot(j);
                     if (annot == null || annot.GetSubtype() == PdfAnnotSubtype.kAnnotLink)
@@ -34,6 +34,7 @@ namespace PDFix.App.Module
                     if (!page.FlattenAnnot(annot))
                         throw new Exception(pdfix.GetError());
                 }
+                page.SetContent();
                 page.Release();
             }
 
