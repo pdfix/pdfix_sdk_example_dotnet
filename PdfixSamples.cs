@@ -68,8 +68,7 @@ namespace PDFix.App.Module
             Console.WriteLine("AddWatermark Sample");
             AddWatermark.Run(inputPath + "test.pdf",
               outputPath + "/AddWatermark.pdf",
-              inputPath + "/watermark.png",
-              new PdfWatermarkParams());
+              inputPath + "/watermark.png");
 
             Console.WriteLine("ConvertToHtml Sample");
             ConvertToHtml.Run(inputPath + "test.pdf",

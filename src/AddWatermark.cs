@@ -14,8 +14,7 @@ namespace PDFix.App.Module
         public static void Run(
             String openPath,                            // source PDF document
             String savePath,                            // output PDF document
-            String imgPath,                             // watermark to apply
-            PdfWatermarkParams watermarkParams          // watermark params
+            String imgPath                              // watermark to apply
             )
         {
             Pdfix pdfix = new Pdfix();
