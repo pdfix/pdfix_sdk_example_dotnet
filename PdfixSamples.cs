@@ -68,7 +68,9 @@ namespace PDFix.App.Module
             Console.WriteLine("AddWatermark Sample");
             AddWatermark.Run(inputPath + "test.pdf",
               outputPath + "/AddWatermark.pdf",
-              inputPath + "/watermark.png");
+              inputPath + "/watermark.png",
+              0, -1, 1, false, PdfAlignment.kAlignmentLeft, PdfAlignment.kAlignmentTop, 0f, 70f, 1f, 45f, 0.9f
+              );
 
             Console.WriteLine("ConvertToHtml Sample");
             ConvertToHtml.Run(inputPath + "test.pdf",
