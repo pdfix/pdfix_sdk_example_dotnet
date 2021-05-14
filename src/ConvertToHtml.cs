@@ -54,6 +54,7 @@ namespace PDFix.App.Module
             //htmlParams.flags |= PdfToHtml.kHtmlRetainTextColor;
             htmlParams.flags |= PdfToHtml.kHtmlNoExternalCSS | PdfToHtml.kHtmlNoExternalJS |
                 PdfToHtml.kHtmlNoExternalIMG | PdfToHtml.kHtmlNoExternalFONT;
+            htmlParams.image_params.format = PdfImageFormat.kImageFormatJpg;
 
             PdfHtmlDoc htmlDoc = pdfToHtml.OpenHtmlDoc(doc);
             if (htmlDoc == null)
