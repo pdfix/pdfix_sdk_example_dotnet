@@ -162,7 +162,7 @@ namespace PDFix.App.Module
             doc_prelight.SetProperty("ignore_tags", 1);
 
             // re-tag non-tagged page content
-            if (!page_map.AcquireElements(null, IntPtr.Zero))
+            if (!page_map.CreateElements(null, IntPtr.Zero))
                 throw new Exception(pdfix.GetErrorType().ToString());
             if (!page_map.AddTags(table, null, IntPtr.Zero))
                 throw new Exception(pdfix.GetErrorType().ToString());
