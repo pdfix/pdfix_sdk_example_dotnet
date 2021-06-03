@@ -42,9 +42,6 @@ namespace PDFix.App.Module
             if (image_obj == null)
                 throw new Exception(pdfix.GetError());
 
-            // create path object
-
-
             // add annotation on the first page
             var page = doc.AcquirePage(0);
             if (page == null)

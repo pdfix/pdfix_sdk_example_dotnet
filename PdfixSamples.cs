@@ -101,6 +101,10 @@ namespace PDFix.App.Module
             Console.WriteLine("ExtractText Sample");
             ExtractText.Run(inputPath + "test.pdf");
 
+            Console.WriteLine("ChangeTextColor Sample");
+            ChangeTextColor.Run(inputPath + "test.pdf",
+              outputPath + "/ChangeTextColor.pdf");
+
             Console.WriteLine("ExportImages Sample");
             ExportImages.Run(inputPath + "test.pdf", 
               outputPath);
