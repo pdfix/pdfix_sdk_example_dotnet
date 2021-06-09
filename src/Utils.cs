@@ -14,6 +14,12 @@ namespace PDFix.App.Module
             return path + name;
         }
 
+        public static bool contains(PdfRect a, PdfRect b)
+        {
+            return (a.left <= b.left) && (a.right >= b.right) &&
+                (a.bottom <= b.bottom) && (a.top >= b.top);
+        }
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         // PdfMatrix utils
         ////////////////////////////////////////////////////////////////////////////////////////////////////
