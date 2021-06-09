@@ -43,7 +43,11 @@ namespace PDFix.App.Module
             };
 
             PdfPage page = doc.AcquirePage(0);
-            PdePageMap pageMap = page.AcquirePageMap(null, IntPtr.Zero);
+            PdePageMap pageMap = page.AcquirePageMap();
+            if (pageMap == null)
+                throw new Exception(pdfix.GetError());
+            if (!pageMap.CreateElements(null, IntPtr.Zero))
+                throw new Exception(pdfix.GetError());
 
             // define an event callback
             PdfEventProc event_callback = (data) =>

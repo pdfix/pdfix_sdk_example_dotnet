@@ -46,8 +46,10 @@ namespace PDFix.App.Module
         private static void ParsePage(Pdfix pdfix, PdfPage page)
         {
             // get pageMap for the current page
-            PdePageMap pageMap = page.AcquirePageMap(null, IntPtr.Zero);
+            PdePageMap pageMap = page.AcquirePageMap();
             if (pageMap == null)
+                throw new Exception(pdfix.GetError());
+            if (!pageMap.CreateElements(null, IntPtr.Zero))
                 throw new Exception(pdfix.GetError());
 
             // get page container

@@ -152,7 +152,7 @@ namespace PDFix.App.Module
             // tag page
             PdfPage page = doc.AcquirePage(0);
 
-            PdePageMap page_map = page.CreatePageMap();
+            PdePageMap page_map = page.AcquirePageMap();
             PdeElement elem = page_map.CreateElement(PdfElementType.kPdeImage, null);
             elem.SetBBox(bbox);
             elem.SetAlt("This is image caption");
