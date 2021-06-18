@@ -58,7 +58,7 @@ namespace PDFix.App.Module
                                 blue.SetValue(0, 0);
                                 blue.SetValue(1, 0);
                                 blue.SetValue(2, 1);
-                                var text_state = text_obj.GetTextState(doc);
+                                var text_state = text_obj.GetTextState();
                                 text_state.color_state.fill_color = blue;
                                 text_obj.SetTextState(text_state);
                             }
