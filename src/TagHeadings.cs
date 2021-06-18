@@ -26,7 +26,7 @@ namespace PDFix.App.Module
                 PdsContentMark content_mark = page_object.GetContentMark();
                 if (content_mark != null && content_mark.GetTagMcid() == mcid)
                 {
-                    PdfTextState ts = text.GetTextState(page_object.GetPage().GetDoc());
+                    PdfTextState ts = text.GetTextState();
                     if (ts.font != null)
                         return ts;
                 }
