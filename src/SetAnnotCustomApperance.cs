@@ -60,8 +60,8 @@ namespace PDFix.App.Module
                 top = 200
             };
 
-            PdfAnnot annot = page.AddNewAnnot(0, annot_rect, PdfAnnotSubtype.kAnnotStamp);
-           
+            PdfAnnot annot = page.CreateAnnot(PdfAnnotSubtype.kAnnotStamp, annot_rect);
+            page.AddAnnot(0, annot);
             // create content
             var content = doc.CreateContent();
             

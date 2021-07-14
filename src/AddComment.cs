@@ -36,7 +36,8 @@ namespace PDFix.App.Module
             annotRect.right = (float)((cropBox.right + cropBox.left) / 2.0) + 10;
             annotRect.top = (float)((cropBox.top + cropBox.bottom) / 2.0) + 10;
 
-            PdfTextAnnot annot = page.AddNewTextAnnot(-1, annotRect);
+            PdfTextAnnot annot = (PdfTextAnnot)page.CreateAnnot(PdfAnnotSubtype.kAnnotText, annotRect);
+            page.AddAnnot(-1, annot);
             if (annot == null)
                 throw new Exception(pdfix.GetError());
             annot.SetAuthor(@"Peter Brown");

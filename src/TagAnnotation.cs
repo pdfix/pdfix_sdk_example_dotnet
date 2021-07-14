@@ -147,7 +147,8 @@ namespace PDFix.App.Module
 
             // add new link annotation to the page
             PdfPage page = doc.AcquirePage(0);
-            PdfLinkAnnot annot = page.AddNewLinkAnnot(0, annot_bbox);
+            PdfLinkAnnot annot = (PdfLinkAnnot)page.CreateAnnot(PdfAnnotSubtype.kAnnotLink, annot_bbox);
+            page.AddAnnot(0, annot);
             if (annot == null)
                 throw new Exception(pdfix.GetErrorType().ToString());
 

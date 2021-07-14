@@ -63,7 +63,8 @@ namespace PDFix.App.Module
                     bottom = 100,
                     top = 200
                 };
-                annot = page.AddNewAnnot(0, annot_rect, PdfAnnotSubtype.kAnnotStamp);
+                annot = page.CreateAnnot(PdfAnnotSubtype.kAnnotStamp, annot_rect);
+                page.AddAnnot(0, annot);
             }
 
             // set annotation appearance
