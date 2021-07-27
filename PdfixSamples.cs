@@ -81,6 +81,7 @@ namespace PDFix.App.Module
                 flags = PdfToHtml.kHtmlNoExternalCSS | PdfToHtml.kHtmlNoExternalJS | PdfToHtml.kHtmlNoExternalIMG | PdfToHtml.kHtmlNoExternalFONT
               });
 
+            Console.WriteLine("ConvertToHtmlByPages Sample");
             ConvertToHtmlByPages.Run(inputPath + "test.pdf",
               configPath,
               new PdfHtmlParams()

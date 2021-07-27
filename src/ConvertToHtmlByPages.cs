@@ -44,38 +44,36 @@ namespace PDFix.App.Module
                 stm.Destroy();
             }
 
+            //htmlParams.type = PdfHtmlType.kPdfHtmlResponsive;
             htmlParams.flags |= PdfToHtml.kHtmlNoExternalCSS | PdfToHtml.kHtmlNoExternalJS |
                 PdfToHtml.kHtmlNoExternalIMG | PdfToHtml.kHtmlNoExternalFONT;
-            htmlParams.image_params.format = PdfImageFormat.kImageFormatJpg;
+            //htmlParams.image_params.format = PdfImageFormat.kImageFormatJpg;
+            //htmlParams.image_params.quality = 80;
 
             PdfHtmlDoc htmlDoc = pdfToHtml.OpenHtmlDoc(doc);
             if (htmlDoc == null)
                 throw new Exception(pdfix.GetError());
 
-            // save common js and css for all pages
-            PsStream docCss = pdfix.CreateMemStream();
-            if (!pdfToHtml.SaveCSS(docCss))
-                throw new Exception(pdfix.GetError());
-            docCss.Destroy();
+            var docStm = pdfix.CreateFileStream(Utils.GetAbsolutePath("output") + "/pages.html", PsFileMode.kPsTruncate);
+            
+            // prepare head
+            docStm.Write(0, System.Text.Encoding.Default.GetBytes("<html>\n<head>\n<title>PDFix sample</title>\n</head>\n<body>\n"));
+            docStm.Write(docStm.GetSize(), System.Text.Encoding.Default.GetBytes("<script>\n"));
+            pdfToHtml.SaveJavaScript(docStm);
+            docStm.Write(docStm.GetSize(), System.Text.Encoding.Default.GetBytes("\n</script>\n<style>\n"));
+            pdfToHtml.SaveCSS(docStm);
+            docStm.Write(docStm.GetSize(), System.Text.Encoding.Default.GetBytes("\n</style>\n"));
 
-            PsStream docJs = pdfix.CreateMemStream();
-            if (!pdfToHtml.SaveJavaScript(docJs))
-                throw new Exception(pdfix.GetError());
-            docJs.Destroy();
-
-            PsStream docStm = pdfix.CreateMemStream();
-            if (!htmlDoc.SaveDocHtml(docStm, htmlParams, null, IntPtr.Zero))
-                throw new Exception(pdfix.GetError());
-            docStm.Destroy();
-
+            // convert pages
             for (int i = 0; i < doc.GetNumPages(); i++)
             {
-                PsStream pageStm = pdfix.CreateMemStream();
-                if (!htmlDoc.SavePageHtml(pageStm, htmlParams, i, null, IntPtr.Zero))
+                if (!htmlDoc.SavePageHtml(docStm, htmlParams, i, null, IntPtr.Zero))
                     throw new Exception(pdfix.GetError());
-                pageStm.Destroy();
             }
 
+            docStm.Write(docStm.GetSize(), System.Text.Encoding.Default.GetBytes("</body>\n</html>"));
+          
+            docStm.Destroy();
             htmlDoc.Close();
             doc.Close();
             pdfToHtml.Destroy();

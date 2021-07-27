@@ -107,9 +107,8 @@ namespace PDFix.App.Module
                 if (struct_elem.GetKidType(i) == PdfStructElementType.kPdsStructKidElement)
                 {
                     PdsObject kid_obj = struct_elem.GetKidObject(i);
-                    PdsStructElement kid_elem = struct_elem.GetStructTree().AcquireStructElement(kid_obj);
+                    PdsStructElement kid_elem = struct_elem.GetStructTree().GetStructElement(kid_obj);
                     TagParagraphAsHeading(kid_elem);
-                    kid_elem.Release();
                 }
             }
         }
@@ -145,9 +144,8 @@ namespace PDFix.App.Module
             for (int i = 0; i < struct_tree.GetNumKids(); i++)
             {
                 PdsObject kid_obj = struct_tree.GetKidObject(i);
-                PdsStructElement kid_elem = struct_tree.AcquireStructElement(kid_obj);
+                PdsStructElement kid_elem = struct_tree.GetStructElement(kid_obj);
                 TagParagraphAsHeading(kid_elem);
-                kid_elem.Release();
             }
 
             if (!doc.Save(savePath, Pdfix.kSaveFull))
