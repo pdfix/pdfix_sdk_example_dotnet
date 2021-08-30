@@ -58,6 +58,9 @@ namespace PDFix.App.Module
               outputPath + "/SetAnnotCustomAppearance.pdf",
               inputPath + "/watermark.png");
 
+            Console.WriteLine("Extract PDF Data");
+            ExtractData.Run(inputPath + "test.pdf", "", false);
+
             Console.WriteLine("AddTags Sample");
             AddTags.Run(inputPath + "test.pdf",
               outputPath + "/AddTags.pdf", configPath);

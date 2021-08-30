@@ -49,7 +49,7 @@ namespace PDFix.App.Module
                 if (struct_elem.GetKidType(i) == PdfStructElementType.kPdsStructKidElement)
                 {
                     PdsObject kid_obj = struct_elem.GetKidObject(i);
-                    PdsStructElement kid_elem = struct_elem.GetStructTree().GetStructElement(kid_obj);
+                    PdsStructElement kid_elem = struct_elem.GetStructTree().AcquireStructElement(kid_obj);
 
                     string type = kid_elem.GetType_(true);
                     if (type == "P")
@@ -80,6 +80,8 @@ namespace PDFix.App.Module
                     // remove this element if it has no kids
                     if (kid_elem.GetNumKids() == 0)
                         struct_elem.RemoveKid(i);
+
+                    kid_elem.Release();
 
                 }
                 // remove only 2 paragraphs in this sample
@@ -117,8 +119,9 @@ namespace PDFix.App.Module
             for (int i = 0; i < struct_tree.GetNumKids(); i++)
             {
                 PdsObject kid_obj = struct_tree.GetKidObject(i);
-                PdsStructElement kid_elem = struct_tree.GetStructElement(kid_obj);
+                PdsStructElement kid_elem = struct_tree.AcquireStructElement(kid_obj);
                 RemoveParagraph(kid_elem);
+                kid_elem.Release();
             }
 
             // the struct tree was updates, save page content on each page to apply changes

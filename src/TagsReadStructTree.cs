@@ -64,10 +64,11 @@ namespace PDFix.App.Module
                 {
                     case PdfStructElementType.kPdsStructKidElement:
                         {
-                            var kid_struct_elem = struct_elem.GetStructTree().GetStructElement(kid_obj);
+                            var kid_struct_elem = struct_elem.GetStructTree().AcquireStructElement(kid_obj);
                             if (kid_struct_elem == null)
                                 throw new Exception(pdfix.GetErrorType().ToString());
                             bboxes.AddRange(GetStructElementBboxes(doc, kid_struct_elem));
+                            kid_struct_elem.Release();
                         }
                         break;
                     case PdfStructElementType.kPdsStructKidObject:
@@ -134,7 +135,7 @@ namespace PDFix.App.Module
                 {
                     case PdfStructElementType.kPdsStructKidElement:
                         {
-                            var kid_struct_elem = struct_elem.GetStructTree().GetStructElement(kid_obj);
+                            var kid_struct_elem = struct_elem.GetStructTree().AcquireStructElement(kid_obj);
                             if (kid_struct_elem == null)
                                 throw new Exception(pdfix.GetErrorType().ToString());
                             ProcessStructElement(doc, kid_struct_elem, indent);
@@ -189,8 +190,9 @@ namespace PDFix.App.Module
                 for (var i = 0; i < struct_tree.GetNumKids(); i++)
                 {
                     PdsObject kid_object = struct_tree.GetKidObject(i);
-                    PdsStructElement struct_elem = struct_tree.GetStructElement(kid_object);
+                    PdsStructElement struct_elem = struct_tree.AcquireStructElement(kid_object);
                     ProcessStructElement(doc, struct_elem, "");
+                    struct_elem.Release();
                 }
             }
 

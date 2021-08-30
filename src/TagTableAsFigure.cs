@@ -55,8 +55,9 @@ namespace PDFix.App.Module
                 else if (struct_elem.GetKidType(i) == PdfStructElementType.kPdsStructKidElement)
                 {
                     PdsObject kid_obj = struct_elem.GetKidObject(i);
-                    PdsStructElement kid_elem = struct_elem.GetStructTree().GetStructElement(kid_obj);
+                    PdsStructElement kid_elem = struct_elem.GetStructTree().AcquireStructElement(kid_obj);
                     GetStructElementBBox(kid_elem, ref bbox);
+                    kid_elem.Release();
                 }
             }
             return result;
@@ -74,7 +75,7 @@ namespace PDFix.App.Module
                 if (struct_elem.GetKidType(i) == PdfStructElementType.kPdsStructKidElement)
                 {
                     PdsObject kid_obj = struct_elem.GetKidObject(i);
-                    PdsStructElement kid_elem = struct_elem.GetStructTree().GetStructElement(kid_obj);
+                    PdsStructElement kid_elem = struct_elem.GetStructTree().AcquireStructElement(kid_obj);
                     if (kid_elem == null)
                         throw new Exception(pdfix.GetErrorType().ToString());
 
@@ -98,7 +99,7 @@ namespace PDFix.App.Module
             for (int i = 0; i < struct_tree.GetNumKids(); i++)
             {
                 PdsObject kid_obj = struct_tree.GetKidObject(i);
-                PdsStructElement kid_elem = struct_tree.GetStructElement(kid_obj);
+                PdsStructElement kid_elem = struct_tree.AcquireStructElement(kid_obj);
                 var paragraph = GetFirstTable(kid_elem);
                 if (paragraph != null)
                 {
@@ -170,6 +171,8 @@ namespace PDFix.App.Module
             // udpate the table element type
             if (!table.SetType("Sect"))
                 throw new Exception(pdfix.GetErrorType().ToString());
+
+            table.Release();
 
             if (!doc.Save(savePath, Pdfix.kSaveFull))
                 throw new Exception(pdfix.GetError());
