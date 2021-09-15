@@ -56,28 +56,27 @@ namespace PDFix.App.Module
         static List<PdfRect> GetStructElementBboxes(PdfDoc doc, PdsStructElement struct_elem)
         {
             var bboxes = new List<PdfRect>();
-            int num_kids = struct_elem.GetNumKids();
+            int num_kids = struct_elem.GetNumChildren();
             for (int i = 0; i < num_kids; i++)
             {
-                var kid_obj = struct_elem.GetKidObject(i);
-                switch (struct_elem.GetKidType(i))
+                var kid_obj = struct_elem.GetChildObject(i);
+                switch (struct_elem.GetChildType(i))
                 {
-                    case PdfStructElementType.kPdsStructKidElement:
+                    case PdfStructElementType.kPdsStructChildElement:
                         {
-                            var kid_struct_elem = struct_elem.GetStructTree().AcquireStructElement(kid_obj);
+                            var kid_struct_elem = struct_elem.GetStructTree().GetStructElementFromObject(kid_obj);
                             if (kid_struct_elem == null)
                                 throw new Exception(pdfix.GetErrorType().ToString());
                             bboxes.AddRange(GetStructElementBboxes(doc, kid_struct_elem));
-                            kid_struct_elem.Release();
                         }
                         break;
-                    case PdfStructElementType.kPdsStructKidObject:
+                    case PdfStructElementType.kPdsStructChildObject:
                         break;
-                    case PdfStructElementType.kPdsStructKidStreamContent:
-                    case PdfStructElementType.kPdsStructKidPageContent:
+                    case PdfStructElementType.kPdsStructChildStreamContent:
+                    case PdfStructElementType.kPdsStructChildPageContent:
                         {
-                            var kid_page_num = struct_elem.GetKidPageNumber(i);
-                            var mcid = struct_elem.GetKidMcid(i);
+                            var kid_page_num = struct_elem.GetChildPageNumber(i);
+                            var mcid = struct_elem.GetChildMcid(i);
                             bboxes.AddRange(GetMcidBBoxes(doc, kid_page_num, mcid));
                         }
                         break;
@@ -126,34 +125,34 @@ namespace PDFix.App.Module
             if (page_num != -1)
                 Console.WriteLine(indent, "Page number: "+ page_num);
 
-            int num_kids = struct_elem.GetNumKids();
+            int num_kids = struct_elem.GetNumChildren();
             for (int i = 0; i < num_kids; i++)
             {
-                var kid_obj = struct_elem.GetKidObject(i);
+                var kid_obj = struct_elem.GetChildObject(i);
                 // based on structure element you can obtain different data
-                switch (struct_elem.GetKidType(i))
+                switch (struct_elem.GetChildType(i))
                 {
-                    case PdfStructElementType.kPdsStructKidElement:
+                    case PdfStructElementType.kPdsStructChildElement:
                         {
-                            var kid_struct_elem = struct_elem.GetStructTree().AcquireStructElement(kid_obj);
+                            var kid_struct_elem = struct_elem.GetStructTree().GetStructElementFromObject(kid_obj);
                             if (kid_struct_elem == null)
                                 throw new Exception(pdfix.GetErrorType().ToString());
                             ProcessStructElement(doc, kid_struct_elem, indent);
                         }
                         break;
-                    case PdfStructElementType.kPdsStructKidObject:
+                    case PdfStructElementType.kPdsStructChildObject:
                         break;
-                    case PdfStructElementType.kPdsStructKidStreamContent:
+                    case PdfStructElementType.kPdsStructChildStreamContent:
                         {
-                            var kid_page_num = struct_elem.GetKidPageNumber(i);
+                            var kid_page_num = struct_elem.GetChildPageNumber(i);
                             Console.WriteLine(indent + "Kid Page number: " + kid_page_num);
-                            var mcid = struct_elem.GetKidMcid(i);
+                            var mcid = struct_elem.GetChildMcid(i);
                             Console.WriteLine(indent + "MCID: " + mcid);
                         }
                         break;
-                    case PdfStructElementType.kPdsStructKidPageContent:
+                    case PdfStructElementType.kPdsStructChildPageContent:
                         {
-                            var mcid = struct_elem.GetKidMcid(i);
+                            var mcid = struct_elem.GetChildMcid(i);
                             Console.WriteLine(indent + "MCID: " + mcid);
                         }
                         break;               
@@ -187,12 +186,11 @@ namespace PDFix.App.Module
                 Console.WriteLine("No Tags available");
             else
             {
-                for (var i = 0; i < struct_tree.GetNumKids(); i++)
+                for (var i = 0; i < struct_tree.GetNumChildren(); i++)
                 {
-                    PdsObject kid_object = struct_tree.GetKidObject(i);
-                    PdsStructElement struct_elem = struct_tree.AcquireStructElement(kid_object);
+                    PdsObject kid_object = struct_tree.GetChildObject(i);
+                    PdsStructElement struct_elem = struct_tree.GetStructElementFromObject(kid_object);
                     ProcessStructElement(doc, struct_elem, "");
-                    struct_elem.Release();
                 }
             }
 

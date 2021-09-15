@@ -52,16 +52,16 @@ namespace PDFix.App.Module
         //////////////////////////////////////////////////////////////////////////////////////////////////
         static PdfTextState GetParagraphTextState(PdsStructElement struct_elem)
         {
-            for (int i = 0; i < struct_elem.GetNumKids(); i++)
+            for (int i = 0; i < struct_elem.GetNumChildren(); i++)
             {
-                if (struct_elem.GetKidType(i) == PdfStructElementType.kPdsStructKidPageContent)
+                if (struct_elem.GetChildType(i) == PdfStructElementType.kPdsStructChildPageContent)
                 {
                     // acquire page on which the element is present
                     PdfDoc doc = struct_elem.GetStructTree().GetDoc();
-                    PdfPage page = doc.AcquirePage(struct_elem.GetKidPageNumber(i));
+                    PdfPage page = doc.AcquirePage(struct_elem.GetChildPageNumber(i));
 
                     // find text object with mcid on the page to get the text state
-                    int mcid = struct_elem.GetKidMcid(i);
+                    int mcid = struct_elem.GetChildMcid(i);
                     var content = page.GetContent();
                     for (int j = 0; j < content.GetNumObjects(); j++)
                     {
@@ -102,14 +102,13 @@ namespace PDFix.App.Module
                 return; // this was a P tag, no need to continue to kid struct elements
             }
             // search kid struct elements
-            for (int i = 0; i < struct_elem.GetNumKids(); i++)
+            for (int i = 0; i < struct_elem.GetNumChildren(); i++)
             {
-                if (struct_elem.GetKidType(i) == PdfStructElementType.kPdsStructKidElement)
+                if (struct_elem.GetChildType(i) == PdfStructElementType.kPdsStructChildElement)
                 {
-                    PdsObject kid_obj = struct_elem.GetKidObject(i);
-                    PdsStructElement kid_elem = struct_elem.GetStructTree().AcquireStructElement(kid_obj);
+                    PdsObject kid_obj = struct_elem.GetChildObject(i);
+                    PdsStructElement kid_elem = struct_elem.GetStructTree().GetStructElementFromObject(kid_obj);
                     TagParagraphAsHeading(kid_elem);
-                    kid_elem.Release();
                 }
             }
         }
@@ -142,12 +141,11 @@ namespace PDFix.App.Module
                 throw new Exception(pdfix.GetErrorType().ToString());
 
             // tag text on the bottom of the page as artifact
-            for (int i = 0; i < struct_tree.GetNumKids(); i++)
+            for (int i = 0; i < struct_tree.GetNumChildren(); i++)
             {
-                PdsObject kid_obj = struct_tree.GetKidObject(i);
-                PdsStructElement kid_elem = struct_tree.AcquireStructElement(kid_obj);
+                PdsObject kid_obj = struct_tree.GetChildObject(i);
+                PdsStructElement kid_elem = struct_tree.GetStructElementFromObject(kid_obj);
                 TagParagraphAsHeading(kid_elem);
-                kid_elem.Release();
             }
 
             if (!doc.Save(savePath, Pdfix.kSaveFull))

@@ -26,7 +26,7 @@ namespace PDFix.App.Module
                 PdsPageObject page_obj = content.GetObject(i);
 
                 PdsContentMark content_mark = page_obj.GetContentMark();
-                if (!content_mark.GetTagArtifact() && content_mark.GetTagMcid() == -1)
+                if (null != content_mark.GetTagArtifact() && content_mark.GetTagMcid() == -1)
                 {
                     PdsDictionary artifact_dict = doc.CreateDictObject(false);
                     artifact_dict.Put("Type", doc.CreateNameObject(false, "Pagination"));
@@ -44,19 +44,19 @@ namespace PDFix.App.Module
         internal static void RemoveParagraph(PdsStructElement struct_elem)
         {
             // remove last 2 P struct elements from struct tree
-            for (int i = struct_elem.GetNumKids() - 1; i >= 0; i--)
+            for (int i = struct_elem.GetNumChildren() - 1; i >= 0; i--)
             {
-                if (struct_elem.GetKidType(i) == PdfStructElementType.kPdsStructKidElement)
+                if (struct_elem.GetChildType(i) == PdfStructElementType.kPdsStructChildElement)
                 {
-                    PdsObject kid_obj = struct_elem.GetKidObject(i);
-                    PdsStructElement kid_elem = struct_elem.GetStructTree().AcquireStructElement(kid_obj);
+                    PdsObject kid_obj = struct_elem.GetChildObject(i);
+                    PdsStructElement kid_elem = struct_elem.GetStructTree().GetStructElementFromObject(kid_obj);
 
                     string type = kid_elem.GetType_(true);
                     if (type == "P")
                     {
-                        for (int j = kid_elem.GetNumKids() - 1; j >= 0; j--)
+                        for (int j = kid_elem.GetNumChildren() - 1; j >= 0; j--)
                         {
-                            if (!kid_elem.RemoveKid(j))
+                            if (!kid_elem.RemoveChild(j))
                                 throw new Exception(pdfix.GetErrorType().ToString());
                         }
                     }
@@ -66,9 +66,9 @@ namespace PDFix.App.Module
                         string alt = kid_elem.GetAlt();
                         if (alt.Length == 0)
                         {
-                            for (int j = kid_elem.GetNumKids() - 1; j >= 0; j--)
+                            for (int j = kid_elem.GetNumChildren() - 1; j >= 0; j--)
                             {
-                                if (!kid_elem.RemoveKid(j))
+                                if (!kid_elem.RemoveChild(j))
                                     throw new Exception(pdfix.GetErrorType().ToString());
                             }
                         }
@@ -78,10 +78,8 @@ namespace PDFix.App.Module
                         RemoveParagraph(kid_elem);
                     }
                     // remove this element if it has no kids
-                    if (kid_elem.GetNumKids() == 0)
-                        struct_elem.RemoveKid(i);
-
-                    kid_elem.Release();
+                    if (kid_elem.GetNumChildren() == 0)
+                        struct_elem.RemoveChild(i);
 
                 }
                 // remove only 2 paragraphs in this sample
@@ -116,12 +114,11 @@ namespace PDFix.App.Module
                 throw new Exception(pdfix.GetErrorType().ToString());
 
             // tag text on the bottom of the page as artifact
-            for (int i = 0; i < struct_tree.GetNumKids(); i++)
+            for (int i = 0; i < struct_tree.GetNumChildren(); i++)
             {
-                PdsObject kid_obj = struct_tree.GetKidObject(i);
-                PdsStructElement kid_elem = struct_tree.AcquireStructElement(kid_obj);
+                PdsObject kid_obj = struct_tree.GetChildObject(i);
+                PdsStructElement kid_elem = struct_tree.GetStructElementFromObject(kid_obj);
                 RemoveParagraph(kid_elem);
-                kid_elem.Release();
             }
 
             // the struct tree was updates, save page content on each page to apply changes

@@ -19,12 +19,12 @@ namespace PDFix.App.Module
         private static PdsStructElement GetFirstFigure(PdsStructElement struct_elem)
         {
             // search kid struct elements
-            for (int i = 0; i < struct_elem.GetNumKids(); i++)
+            for (int i = 0; i < struct_elem.GetNumChildren(); i++)
             {
-                if (struct_elem.GetKidType(i) == PdfStructElementType.kPdsStructKidElement)
+                if (struct_elem.GetChildType(i) == PdfStructElementType.kPdsStructChildElement)
                 {
-                    PdsObject kid_obj = struct_elem.GetKidObject(i);
-                    PdsStructElement kid_elem = struct_elem.GetStructTree().AcquireStructElement(kid_obj);
+                    PdsObject kid_obj = struct_elem.GetChildObject(i);
+                    PdsStructElement kid_elem = struct_elem.GetStructTree().GetStructElementFromObject(kid_obj);
                     if (kid_elem == null)
                         throw new Exception(pdfix.GetErrorType().ToString());
 
@@ -45,10 +45,10 @@ namespace PDFix.App.Module
 
         private static PdsStructElement GetFirstFigure(PdsStructTree struct_tree)
         {
-            for (int i = 0; i < struct_tree.GetNumKids(); i++)
+            for (int i = 0; i < struct_tree.GetNumChildren(); i++)
             {
-                PdsObject kid_obj = struct_tree.GetKidObject(i);
-                PdsStructElement kid_elem = struct_tree.AcquireStructElement(kid_obj);
+                PdsObject kid_obj = struct_tree.GetChildObject(i);
+                PdsStructElement kid_elem = struct_tree.GetStructElementFromObject(kid_obj);
                 var paragraph = GetFirstFigure(kid_elem);
                 if (paragraph != null)
                 {
@@ -83,8 +83,6 @@ namespace PDFix.App.Module
 
             if (!figure.SetAlt("This is a new alternate text"))
                 throw new Exception(pdfix.GetError());
-
-            figure.Release();
 
             if (!doc.Save(savePath, Pdfix.kSaveFull))
                 throw new Exception(pdfix.GetError());

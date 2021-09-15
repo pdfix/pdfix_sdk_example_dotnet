@@ -19,16 +19,16 @@ namespace PDFix.App.Module
         private static bool GetStructElementBBox(PdsStructElement struct_elem, ref PdfRect bbox)
         {
             bool result = false;
-            for (int i = 0; i < struct_elem.GetNumKids(); i++)
+            for (int i = 0; i < struct_elem.GetNumChildren(); i++)
             {
-                if (struct_elem.GetKidType(i) == PdfStructElementType.kPdsStructKidPageContent)
+                if (struct_elem.GetChildType(i) == PdfStructElementType.kPdsStructChildPageContent)
                 {
                     // acquire page on which the element is present
                     PdfDoc doc = struct_elem.GetStructTree().GetDoc();
-                    PdfPage page = doc.AcquirePage(struct_elem.GetKidPageNumber(i));
+                    PdfPage page = doc.AcquirePage(struct_elem.GetChildPageNumber(i));
 
                     // find text object with mcid on the page to get the text state
-                    int mcid = struct_elem.GetKidMcid(i);
+                    int mcid = struct_elem.GetChildMcid(i);
                     var content = page.GetContent();
                     for (int j = 0; j < content.GetNumObjects(); j++)
                     {
@@ -52,12 +52,11 @@ namespace PDFix.App.Module
                         }
                     }
                 }
-                else if (struct_elem.GetKidType(i) == PdfStructElementType.kPdsStructKidElement)
+                else if (struct_elem.GetChildType(i) == PdfStructElementType.kPdsStructChildElement)
                 {
-                    PdsObject kid_obj = struct_elem.GetKidObject(i);
-                    PdsStructElement kid_elem = struct_elem.GetStructTree().AcquireStructElement(kid_obj);
+                    PdsObject kid_obj = struct_elem.GetChildObject(i);
+                    PdsStructElement kid_elem = struct_elem.GetStructTree().GetStructElementFromObject(kid_obj);
                     GetStructElementBBox(kid_elem, ref bbox);
-                    kid_elem.Release();
                 }
             }
             return result;
@@ -70,12 +69,12 @@ namespace PDFix.App.Module
         private static PdsStructElement GetFirstTable(PdsStructElement struct_elem)
         {
             // search kid struct elements
-            for (int i = 0; i < struct_elem.GetNumKids(); i++)
+            for (int i = 0; i < struct_elem.GetNumChildren(); i++)
             {
-                if (struct_elem.GetKidType(i) == PdfStructElementType.kPdsStructKidElement)
+                if (struct_elem.GetChildType(i) == PdfStructElementType.kPdsStructChildElement)
                 {
-                    PdsObject kid_obj = struct_elem.GetKidObject(i);
-                    PdsStructElement kid_elem = struct_elem.GetStructTree().AcquireStructElement(kid_obj);
+                    PdsObject kid_obj = struct_elem.GetChildObject(i);
+                    PdsStructElement kid_elem = struct_elem.GetStructTree().GetStructElementFromObject(kid_obj);
                     if (kid_elem == null)
                         throw new Exception(pdfix.GetErrorType().ToString());
 
@@ -96,10 +95,10 @@ namespace PDFix.App.Module
 
         private static PdsStructElement GetFirstTable(PdsStructTree struct_tree)
         {
-            for (int i = 0; i < struct_tree.GetNumKids(); i++)
+            for (int i = 0; i < struct_tree.GetNumChildren(); i++)
             {
-                PdsObject kid_obj = struct_tree.GetKidObject(i);
-                PdsStructElement kid_elem = struct_tree.AcquireStructElement(kid_obj);
+                PdsObject kid_obj = struct_tree.GetChildObject(i);
+                PdsStructElement kid_elem = struct_tree.GetStructElementFromObject(kid_obj);
                 var paragraph = GetFirstTable(kid_elem);
                 if (paragraph != null)
                 {
@@ -143,8 +142,8 @@ namespace PDFix.App.Module
             GetStructElementBBox(table, ref bbox);
 
             // remove all items from the table to make it untagged cotnent
-            for (int i = table.GetNumKids() - 1; i >= 0; i--)
-                table.RemoveKid(i);
+            for (int i = table.GetNumChildren() - 1; i >= 0; i--)
+                table.RemoveChild(i);
 
             // tag page
             PdfPage page = doc.AcquirePage(0);
@@ -171,8 +170,6 @@ namespace PDFix.App.Module
             // udpate the table element type
             if (!table.SetType("Sect"))
                 throw new Exception(pdfix.GetErrorType().ToString());
-
-            table.Release();
 
             if (!doc.Save(savePath, Pdfix.kSaveFull))
                 throw new Exception(pdfix.GetError());

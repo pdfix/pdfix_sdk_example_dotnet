@@ -18,12 +18,12 @@ namespace PDFix.App.Module
         private static PdsStructElement GetFirstParagraph(PdsStructElement struct_elem)
         {
             // search kid struct elements
-            for (int i = 0; i < struct_elem.GetNumKids(); i++)
+            for (int i = 0; i < struct_elem.GetNumChildren(); i++)
             {
-                if (struct_elem.GetKidType(i) == PdfStructElementType.kPdsStructKidElement)
+                if (struct_elem.GetChildType(i) == PdfStructElementType.kPdsStructChildElement)
                 {
-                    PdsObject kid_obj = struct_elem.GetKidObject(i);
-                    PdsStructElement kid_elem = struct_elem.GetStructTree().AcquireStructElement(kid_obj);
+                    PdsObject kid_obj = struct_elem.GetChildObject(i);
+                    PdsStructElement kid_elem = struct_elem.GetStructTree().GetStructElementFromObject(kid_obj);
                     if (kid_elem == null)
                         throw new Exception(pdfix.GetErrorType().ToString());
 
@@ -44,10 +44,10 @@ namespace PDFix.App.Module
 
         private static PdsStructElement GetFirstParagraph(PdsStructTree struct_tree)
         {
-            for (int i = 0; i < struct_tree.GetNumKids(); i++)
+            for (int i = 0; i < struct_tree.GetNumChildren(); i++)
             {
-                PdsObject kid_obj = struct_tree.GetKidObject(i);
-                PdsStructElement kid_elem = struct_tree.AcquireStructElement(kid_obj);
+                PdsObject kid_obj = struct_tree.GetChildObject(i);
+                PdsStructElement kid_elem = struct_tree.GetStructElementFromObject(kid_obj);
                 var paragraph = GetFirstParagraph(kid_elem);
                 if (paragraph != null)
                 {
@@ -88,15 +88,12 @@ namespace PDFix.App.Module
                 throw new Exception("No table found.");
 
             // move paragraph to the back of it's parent
-            PdsStructElement parent = struct_tree.AcquireStructElement(paragraph.GetParentObject());
+            PdsStructElement parent = struct_tree.GetStructElementFromObject(paragraph.GetParentObject());
             if (parent == null)
                 throw new Exception(pdfix.GetErrorType().ToString());
 
-            if (!paragraph.SetParent(parent, parent.GetNumKids() - 1))
+            if (!paragraph.SetParent(parent, parent.GetNumChildren() - 1))
                 throw new Exception(pdfix.GetErrorType().ToString());
-
-            parent.Release();
-            paragraph.Release();
 
             if (!doc.Save(savePath, Pdfix.kSaveFull))
                 throw new Exception(pdfix.GetError());
