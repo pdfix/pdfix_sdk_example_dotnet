@@ -16,66 +16,42 @@ namespace PDFix.App.Module
             String configPath                   // configuration file
             )
         {
-            Pdfix pdfix = new Pdfix();
+            Pdfix pdfix = new Pdfix();  // initilize Pdfix singleton class
             if (pdfix == null)
                 throw new Exception("Pdfix initialization fail");
 
-            PdfDoc doc = pdfix.OpenDoc(openPath, "");
+            // open the document
+            var doc = pdfix.OpenDoc(openPath, "");
             if (doc == null)
                 throw new Exception(pdfix.GetError());
 
-            PsFileStream stm = pdfix.CreateFileStream(configPath, PsFileMode.kPsReadOnly);
-            if (stm != null)
+            using (var stm = pdfix.CreateFileStream(configPath, PsFileMode.kPsReadOnly))
             {
                 var doc_prelight = doc.GetTemplate();
                 if (doc_prelight == null)
                     throw new Exception(pdfix.GetError());
                 doc_prelight.LoadFromStream(stm, PsDataFormat.kDataFormatJson);
-                stm.Destroy();
             }
 
             // define a cancel progress callback
             PdfCancelProc cancel_callback = (data) =>
             {
-                // to cancel the process return 1
+                    // to cancel the process return 1
                 Console.WriteLine("PdfCancelProc callback was called");
                 return 0;
             };
 
-            PdfPage page = doc.AcquirePage(0);
-            PdePageMap pageMap = page.AcquirePageMap();
-            if (pageMap == null)
-                throw new Exception(pdfix.GetError());
-            if (!pageMap.CreateElements(null, IntPtr.Zero))
-                throw new Exception(pdfix.GetError());
-
-            // define an event callback
-            PdfEventProc event_callback = (data) =>
-            {
-                Console.WriteLine("Page contents did change. Releasing pageMap...");
-                if (pageMap != null)
-                {
-                    pageMap.Release();
-                    pageMap = null;
-                }
-            };
-            if (!pdfix.RegisterEvent(PdfEventType.kEventPageContentsDidChange, event_callback, IntPtr.Zero))
-                throw new Exception(pdfix.GetError());
-
             if (!doc.RemoveTags(cancel_callback, IntPtr.Zero))
                 throw new Exception(pdfix.GetError());
 
-            if (!doc.AddTags(cancel_callback, IntPtr.Zero)) 
+            if (!doc.AddTags(cancel_callback, IntPtr.Zero))
                 throw new Exception(pdfix.GetError());
 
             if (!doc.Save(savePath, Pdfix.kSaveFull))
                 throw new Exception(pdfix.GetError());
 
-            if (!pdfix.UnregisterEvent(PdfEventType.kEventPageContentsDidChange, event_callback, IntPtr.Zero))
-                throw new Exception(pdfix.GetError());
-
             doc.Close();
-            pdfix.Destroy();
+            // pdfix.Destroy(); // call only when exiting application
         }
     }
 }

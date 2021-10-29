@@ -66,9 +66,9 @@
   
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="PDFix.OcrTesseract" Version="6.15.0" />
-    <PackageReference Include="PDFix.PdfToHtml" Version="6.15.0" />
-    <PackageReference Include="PDFix.SDK" Version="6.15.0" />
+    <PackageReference Include="PDFix.OcrTesseract" Version="6.16.0" />
+    <PackageReference Include="PDFix.PdfToHtml" Version="6.16.0" />
+    <PackageReference Include="PDFix.SDK" Version="6.16.0" />
   </ItemGroup>
 
 </Project>
