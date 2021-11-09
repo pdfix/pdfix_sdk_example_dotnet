@@ -16,9 +16,7 @@ namespace PDFix.App.Module
                String savePath                             // output PDF document
                )
         {
-            Pdfix pdfix = new Pdfix();
-            if (pdfix == null)
-                throw new Exception("Pdfix initialization fail");
+            Pdfix pdfix = PdfixEngine.Instance;
 
             PdfDoc doc = pdfix.OpenDoc(openPath, "");
             if (doc == null)
@@ -73,8 +71,7 @@ namespace PDFix.App.Module
             if (!doc.Save(savePath, Pdfix.kSaveFull))
                 throw new Exception(pdfix.GetError());
 
-            doc.Close();    
-            pdfix.Destroy();
+            doc.Close();
         }
     }
 }

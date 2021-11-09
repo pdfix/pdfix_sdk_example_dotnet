@@ -17,9 +17,8 @@ namespace PDFix.App.Module
             PdfHtmlParams htmlParams                    // html conversion params
             )
         {
-            Pdfix pdfix = new Pdfix();
-            if (pdfix == null)
-                throw new Exception("Pdfix initialization fail");
+
+            Pdfix pdfix = PdfixEngine.Instance;
 
             PdfToHtml pdfToHtml = new PdfToHtml();
             if (pdfToHtml == null)
@@ -77,7 +76,6 @@ namespace PDFix.App.Module
             htmlDoc.Close();
             doc.Close();
             pdfToHtml.Destroy();
-            pdfix.Destroy();
         }
     }
 }

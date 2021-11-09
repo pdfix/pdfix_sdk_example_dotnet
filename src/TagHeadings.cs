@@ -10,7 +10,6 @@ namespace PDFix.App.Module
 {
     class TagHeadings
     {
-        internal static Pdfix pdfix;
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
         // GetPageObjectTextState
@@ -118,9 +117,7 @@ namespace PDFix.App.Module
             String savePath                             // dest PDF document
             )
         {
-            pdfix = new Pdfix();
-            if (pdfix == null)
-                throw new Exception("Pdfix initialization fail");
+            Pdfix pdfix = PdfixEngine.Instance;
 
 
             PdfDoc doc = pdfix.OpenDoc(openPath, "");
@@ -152,7 +149,6 @@ namespace PDFix.App.Module
                 throw new Exception(pdfix.GetError());
 
             doc.Close();
-            pdfix.Destroy();
         }
     }
 }

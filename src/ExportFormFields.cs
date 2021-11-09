@@ -6,7 +6,6 @@ namespace PDFix.App.Module
     class ExportFormFields
     {
         private static int _tabOrder = 0;
-        private static Pdfix _pdfix;
 
         private static void ProcessDocumentFormFields(PdfDoc doc)
         {
@@ -91,10 +90,7 @@ namespace PDFix.App.Module
             String openPath                     // source PDF document
             )
         {
-            Pdfix pdfix = new Pdfix();
-            if (pdfix == null)
-                throw new Exception("Pdfix initialization fail");
-            _pdfix = pdfix;
+            var pdfix = PdfixEngine.Instance;
 
             PdfDoc doc = pdfix.OpenDoc(openPath, "");
             if (doc == null)
@@ -111,7 +107,6 @@ namespace PDFix.App.Module
             ProcessDocumentFormFields(doc);
 
             doc.Close();
-            pdfix.Destroy();
         }
     }
 }

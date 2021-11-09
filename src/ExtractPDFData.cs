@@ -203,9 +203,7 @@ namespace PDFix.App.Module
             bool preflight                              // create document preflight
             )
         {
-            Pdfix pdfix = new Pdfix();
-            if (pdfix == null)
-                throw new Exception("Pdfix initialization fail");
+            Pdfix pdfix = PdfixEngine.Instance;
 
             PdfDoc doc = pdfix.OpenDoc(openPath, "");
             if (doc == null)
@@ -248,7 +246,6 @@ namespace PDFix.App.Module
             ExtractDocumentData(doc, docObj, dataType);
 
             doc.Close();
-            pdfix.Destroy();
 
             Console.Write(docObj.ToString());
         }

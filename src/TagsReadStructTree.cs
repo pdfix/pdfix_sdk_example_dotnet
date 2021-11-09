@@ -11,7 +11,6 @@ namespace PDFix.App.Module
 {
     class TagsReadStructTree
     {
-        internal static Pdfix pdfix;
 
         // collect all bounding boxes of the page object with specified mcid
         static List<PdfRect> GetMcidBBoxes(PdsPageObject obj, int mcid)
@@ -66,7 +65,7 @@ namespace PDFix.App.Module
                         {
                             var kid_struct_elem = struct_elem.GetStructTree().GetStructElementFromObject(kid_obj);
                             if (kid_struct_elem == null)
-                                throw new Exception(pdfix.GetErrorType().ToString());
+                                PdfixEngine.ThrowException();
                             bboxes.AddRange(GetStructElementBboxes(doc, kid_struct_elem));
                         }
                         break;
@@ -89,7 +88,7 @@ namespace PDFix.App.Module
         {
             indent += " ";
             if (struct_elem == null)
-                throw new Exception(pdfix.GetErrorType().ToString());
+                PdfixEngine.ThrowException();
 
             // get the element type
             string type_str = struct_elem.GetType_(true);
@@ -136,7 +135,7 @@ namespace PDFix.App.Module
                         {
                             var kid_struct_elem = struct_elem.GetStructTree().GetStructElementFromObject(kid_obj);
                             if (kid_struct_elem == null)
-                                throw new Exception(pdfix.GetErrorType().ToString());
+                                PdfixEngine.ThrowException();
                             ProcessStructElement(doc, kid_struct_elem, indent);
                         }
                         break;
@@ -164,9 +163,7 @@ namespace PDFix.App.Module
             String openPath                             // source PDF document
             )
         {
-            pdfix = new Pdfix();
-            if (pdfix == null)
-                throw new Exception("Pdfix initialization fail");
+            Pdfix pdfix = PdfixEngine.Instance;
 
             PdfDoc doc = pdfix.OpenDoc(openPath, "");
             if (doc == null)
@@ -196,7 +193,6 @@ namespace PDFix.App.Module
 
 
             doc.Close();
-            pdfix.Destroy();
         }
     }
 }

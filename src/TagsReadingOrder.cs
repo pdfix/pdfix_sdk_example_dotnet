@@ -10,7 +10,6 @@ namespace PDFix.App.Module
 {
     class TagsReadingOrder
     {
-        internal static Pdfix pdfix;
         //////////////////////////////////////////////////////////////////////////////////////////////////
         // GetFirstParagraph
         // get reference to the first paragraph on the page
@@ -25,7 +24,7 @@ namespace PDFix.App.Module
                     PdsObject kid_obj = struct_elem.GetChildObject(i);
                     PdsStructElement kid_elem = struct_elem.GetStructTree().GetStructElementFromObject(kid_obj);
                     if (kid_elem == null)
-                        throw new Exception(pdfix.GetErrorType().ToString());
+                        PdfixEngine.ThrowException();
 
                     string type = kid_elem.GetType_(true);
                     if (type == "P")
@@ -62,9 +61,7 @@ namespace PDFix.App.Module
             String savePath                             // dest PDF document
             )
         {
-            pdfix = new Pdfix();
-            if (pdfix == null)
-                throw new Exception("Pdfix initialization fail");
+            Pdfix pdfix = PdfixEngine.Instance;
 
             PdfDoc doc = pdfix.OpenDoc(openPath, "");
             if (doc == null)
@@ -99,7 +96,6 @@ namespace PDFix.App.Module
                 throw new Exception(pdfix.GetError());
 
             doc.Close();
-            pdfix.Destroy();
         }
     }
 }

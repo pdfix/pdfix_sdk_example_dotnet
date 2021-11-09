@@ -40,9 +40,7 @@ namespace PDFix.App.Module
             String openPath                             // source PDF document
             )
         {
-            Pdfix pdfix = new Pdfix();
-            if (pdfix == null)
-                throw new Exception("Pdfix initialization fail");
+            Pdfix pdfix = PdfixEngine.Instance;
 
             PdfDoc doc = pdfix.OpenDoc(openPath, "");
             if (doc == null)
@@ -57,7 +55,6 @@ namespace PDFix.App.Module
             }
 
             doc.Close();
-            pdfix.Destroy();
         }
     }
 }

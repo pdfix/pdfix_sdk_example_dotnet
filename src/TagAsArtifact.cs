@@ -10,7 +10,6 @@ namespace PDFix.App.Module
 {
     class TagAsArtifact
     {
-        internal static Pdfix pdfix;
         internal static int count;
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +56,7 @@ namespace PDFix.App.Module
                         for (int j = kid_elem.GetNumChildren() - 1; j >= 0; j--)
                         {
                             if (!kid_elem.RemoveChild(j))
-                                throw new Exception(pdfix.GetErrorType().ToString());
+                                PdfixEngine.ThrowException();
                         }
                     }
                     else if (type == "Figure")
@@ -69,7 +68,7 @@ namespace PDFix.App.Module
                             for (int j = kid_elem.GetNumChildren() - 1; j >= 0; j--)
                             {
                                 if (!kid_elem.RemoveChild(j))
-                                    throw new Exception(pdfix.GetErrorType().ToString());
+                                    PdfixEngine.ThrowException();
                             }
                         }
                     }
@@ -91,10 +90,8 @@ namespace PDFix.App.Module
             String openPath,                            // source PDF document
             String savePath                             // dest PDF document
             )
-        { 
-            pdfix = new Pdfix();
-            if (pdfix == null)
-                throw new Exception("Pdfix initialization fail");
+        {
+            Pdfix pdfix = PdfixEngine.Instance;
 
             PdfDoc doc = pdfix.OpenDoc(openPath, "");
             if (doc == null)
@@ -133,7 +130,6 @@ namespace PDFix.App.Module
                 throw new Exception(pdfix.GetError());
 
             doc.Close();
-            pdfix.Destroy();
         }
     }
 }

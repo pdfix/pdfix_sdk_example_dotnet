@@ -6,12 +6,11 @@ namespace PDFix.App.Module
     class ExportImages
     {
         private static int _imageIndex = 0;
-        private static Pdfix _pdfix;
 
         private static void ProcessPageObject(PdfPage page, PdsPageObject obj, string savePath)
         {
             if (obj == null)
-                throw new Exception(_pdfix.GetError());
+                PdfixEngine.ThrowException();
 
             switch (obj.GetObjectType())
             {
@@ -41,7 +40,7 @@ namespace PDFix.App.Module
             string imgPath = savePath + "/image_" + (++_imageIndex).ToString() + ".jpg";
             Console.WriteLine("Image Found: " + imgPath);
 
-            var img = _pdfix.CreateImage(rect.right - rect.left, rect.bottom - rect.top, PsImageDIBFormat.kImageDIBFormatArgb);
+            var img = PdfixEngine.Instance.CreateImage(rect.right - rect.left, rect.bottom - rect.top, PsImageDIBFormat.kImageDIBFormatArgb);
 
             PdfPageRenderParams renderParams = new PdfPageRenderParams
             {
@@ -51,7 +50,7 @@ namespace PDFix.App.Module
             };
 
             if (!page.DrawContent(renderParams, null, IntPtr.Zero))
-                throw new Exception(_pdfix.GetError());
+                PdfixEngine.ThrowException();
 
             PdfImageParams imgParams = new PdfImageParams
             {
@@ -59,7 +58,7 @@ namespace PDFix.App.Module
                 quality = 80
             };
             if (!img.Save(imgPath, imgParams))
-                throw new Exception(_pdfix.GetError());
+                PdfixEngine.ThrowException();
 
             img.Destroy();
         }
@@ -69,10 +68,7 @@ namespace PDFix.App.Module
             String savePath
             )
         {
-            Pdfix pdfix = new Pdfix();
-            if (pdfix == null)
-                throw new Exception("Pdfix initialization fail");
-            _pdfix = pdfix;
+            Pdfix pdfix = PdfixEngine.Instance;
 
             PdfDoc doc = pdfix.OpenDoc(openPath, "");
             if (doc == null)
@@ -90,7 +86,6 @@ namespace PDFix.App.Module
             }
 
             doc.Close();
-            pdfix.Destroy();
         }
     }
 }

@@ -18,9 +18,7 @@ namespace PDFix.App.Module
             String language                             // default OCR language
             )
         {
-            Pdfix pdfix = new Pdfix();
-            if (pdfix == null)
-                throw new Exception("Pdfix initialization fail");
+            Pdfix pdfix = PdfixEngine.Instance;
 
             OcrTesseract ocr = new OcrTesseract();
             if (ocr == null)
@@ -46,7 +44,6 @@ namespace PDFix.App.Module
 
             ocrDoc.Close();
             doc.Close();
-            pdfix.Destroy();
         }
     }
 }

@@ -9,9 +9,7 @@ namespace PDFix.App.Module
     {
         public static void Run(String open_file)
         {
-            Pdfix pdfix = new Pdfix();
-            if (pdfix == null)
-                throw new Exception("Pdfix initialization fail");
+            Pdfix pdfix = PdfixEngine.Instance;
 
             // open doc using file stream
             var fileStm = pdfix.CreateFileStream(open_file, PsFileMode.kPsReadOnly);

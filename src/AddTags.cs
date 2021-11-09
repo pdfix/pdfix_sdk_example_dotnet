@@ -16,9 +16,7 @@ namespace PDFix.App.Module
             String configPath                   // configuration file
             )
         {
-            Pdfix pdfix = new Pdfix();  // initilize Pdfix singleton class
-            if (pdfix == null)
-                throw new Exception("Pdfix initialization fail");
+            Pdfix pdfix = PdfixEngine.Instance;
 
             // open the document
             var doc = pdfix.OpenDoc(openPath, "");
@@ -51,7 +49,6 @@ namespace PDFix.App.Module
                 throw new Exception(pdfix.GetError());
 
             doc.Close();
-            // pdfix.Destroy(); // call only when exiting application
         }
     }
 }

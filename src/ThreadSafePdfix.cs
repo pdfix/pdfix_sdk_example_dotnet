@@ -15,7 +15,6 @@ namespace PDFix.App.Module
         static Semaphore semaphore = new Semaphore(1, 1);
 
         static PdfDoc doc = null;
-        static Pdfix pdfix = null;
 
         static void DoSomething()
         {
@@ -24,7 +23,7 @@ namespace PDFix.App.Module
             Console.WriteLine("{0} begins!", Thread.CurrentThread.Name);
             PdfPage page = doc.AcquirePage(0);
             if (page == null)
-                throw new Exception(pdfix.GetError());
+                PdfixEngine.ThrowException();
 
             Thread.Sleep(1000);
             page.Release();
@@ -36,9 +35,7 @@ namespace PDFix.App.Module
             String openPath                             // source PDF document
             )
         {
-            pdfix = new Pdfix();
-            if (pdfix == null)
-                throw new Exception("Pdfix initialization fail");
+            Pdfix pdfix = PdfixEngine.Instance;
 
             doc = pdfix.OpenDoc(openPath, "");
             if (doc == null)

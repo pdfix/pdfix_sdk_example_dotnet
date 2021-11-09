@@ -17,9 +17,7 @@ namespace PDFix.App.Module
             String pfxPassword                          // pfx password
             )
         {
-            Pdfix pdfix = new Pdfix();
-            if (pdfix == null)
-                throw new Exception("Pdfix initialization fail");
+            Pdfix pdfix = PdfixEngine.Instance;
 
             PdfDoc doc = pdfix.OpenDoc(openPath, "");
             if (doc == null)
@@ -39,7 +37,6 @@ namespace PDFix.App.Module
             digSig.Destroy();
 
             doc.Close();
-            pdfix.Destroy();
         }
     }
 }
