@@ -39,7 +39,7 @@ namespace PDFix.App.Module
                 throw new Exception(pdfix.GetError());
 
 
-            //if (!ocrDoc.Save(savePath, ocrParams, null, IntPtr.Zero))
+            //if (!ocrDoc.Save(savePath, ocrParams, null, null))
             //    throw new Exception(pdfix.GetError());
 
             ocrDoc.Close();

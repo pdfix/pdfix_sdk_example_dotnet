@@ -229,10 +229,10 @@ namespace PDFix.App.Module
             {
                 for (var i = 0; i < doc.GetNumPages(); i++)
                 {
-                    if (!docTemplate.AddPage(i, null, IntPtr.Zero))
+                    if (!docTemplate.AddPage(i, null, null))
                         throw new Exception(pdfix.GetError());
                 }
-                if (docTemplate.Update(null, IntPtr.Zero))
+                if (docTemplate.Update(null, null))
                     throw new Exception(pdfix.GetError());
             }
 

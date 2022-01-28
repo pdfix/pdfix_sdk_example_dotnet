@@ -49,7 +49,7 @@ namespace PDFix.App.Module
             PdePageMap pageMap = page.AcquirePageMap();
             if (pageMap == null)
                 throw new Exception(pdfix.GetError());
-            if (!pageMap.CreateElements(null, IntPtr.Zero))
+            if (!pageMap.CreateElements(null, null))
                 throw new Exception(pdfix.GetError());
 
             // get page container

@@ -1,5 +1,4 @@
 ﻿using PDFixSDK.Pdfix;
-using PDFixSDK.PdfToHtml;
 using System;
 
 namespace PDFix.App.Module
@@ -81,7 +80,7 @@ namespace PDFix.App.Module
               configPath,
               new PdfHtmlParams()
               {
-                flags = PdfToHtml.kHtmlNoExternalCSS | PdfToHtml.kHtmlNoExternalJS | PdfToHtml.kHtmlNoExternalIMG | PdfToHtml.kHtmlNoExternalFONT
+                flags = Pdfix.kHtmlNoExternalCSS | Pdfix.kHtmlNoExternalJS | Pdfix.kHtmlNoExternalIMG | Pdfix.kHtmlNoExternalFONT
               });
 
             Console.WriteLine("ConvertToHtmlByPages Sample");
@@ -89,7 +88,7 @@ namespace PDFix.App.Module
               configPath,
               new PdfHtmlParams()
               {
-                flags = PdfToHtml.kHtmlNoExternalCSS | PdfToHtml.kHtmlNoExternalJS | PdfToHtml.kHtmlNoExternalIMG | PdfToHtml.kHtmlNoExternalFONT
+                flags = Pdfix.kHtmlNoExternalCSS | Pdfix.kHtmlNoExternalJS | Pdfix.kHtmlNoExternalIMG | Pdfix.kHtmlNoExternalFONT
               });
 
             Console.WriteLine("DigitalSignature Sample");

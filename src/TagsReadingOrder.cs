@@ -14,7 +14,7 @@ namespace PDFix.App.Module
         // GetFirstParagraph
         // get reference to the first paragraph on the page
         //////////////////////////////////////////////////////////////////////////////////////////////////
-        private static PdsStructElement GetFirstParagraph(PdsStructElement struct_elem)
+        private static bool MoveParagraphToParent(PdsStructElement struct_elem)
         {
             // search kid struct elements
             for (int i = 0; i < struct_elem.GetNumChildren(); i++)
@@ -28,32 +28,28 @@ namespace PDFix.App.Module
 
                     string type = kid_elem.GetType_(true);
                     if (type == "P")
-                        return kid_elem;
-
-                    var paragraph = GetFirstParagraph(kid_elem);
-                    if (paragraph != null)
                     {
-                        return paragraph;
+                        if (!struct_elem.MoveChild(i, struct_elem, struct_elem.GetNumChildren() - 1))
+                            throw new Exception();
+                        return true;
                     }
-
+                    var paragraph = MoveParagraphToParent(kid_elem);
+                    return paragraph;
                 }
             }
-            return null;
+            return false;
         }
 
-        private static PdsStructElement GetFirstParagraph(PdsStructTree struct_tree)
+        private static bool MoveParagraphToParent(PdsStructTree struct_tree)
         {
             for (int i = 0; i < struct_tree.GetNumChildren(); i++)
             {
                 PdsObject kid_obj = struct_tree.GetChildObject(i);
                 PdsStructElement kid_elem = struct_tree.GetStructElementFromObject(kid_obj);
-                var paragraph = GetFirstParagraph(kid_elem);
-                if (paragraph != null)
-                {
-                    return paragraph;
-                }
+                var paragraph = MoveParagraphToParent(kid_elem);
+                return paragraph;
             }
-            return null;
+            return false;
         }
 
         public static void Run(
@@ -68,11 +64,11 @@ namespace PDFix.App.Module
                 throw new Exception(pdfix.GetError());
 
             // cleanup any previous structure tree
-            if (!doc.RemoveTags(null, IntPtr.Zero))
+            if (!doc.RemoveTags(null, null))
                 throw new Exception(pdfix.GetErrorType().ToString());
 
             // autotag document first
-            if (!doc.AddTags(null, IntPtr.Zero))
+            if (!doc.AddTags(null, null))
                 throw new Exception(pdfix.GetErrorType().ToString());
 
             // get the struct tree
@@ -80,17 +76,9 @@ namespace PDFix.App.Module
             if (struct_tree == null)
                 throw new Exception(pdfix.GetErrorType().ToString());
 
-            PdsStructElement paragraph = GetFirstParagraph(struct_tree);
-            if (paragraph == null)
-                throw new Exception("No table found.");
-
             // move paragraph to the back of it's parent
-            PdsStructElement parent = struct_tree.GetStructElementFromObject(paragraph.GetParentObject());
-            if (parent == null)
-                throw new Exception(pdfix.GetErrorType().ToString());
-
-            if (!paragraph.SetParent(parent, parent.GetNumChildren() - 1))
-                throw new Exception(pdfix.GetErrorType().ToString());
+            if (!MoveParagraphToParent(struct_tree))
+                throw new Exception("No table found.");
 
             if (!doc.Save(savePath, Pdfix.kSaveFull))
                 throw new Exception(pdfix.GetError());

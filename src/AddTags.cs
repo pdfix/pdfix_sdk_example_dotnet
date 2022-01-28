@@ -32,17 +32,17 @@ namespace PDFix.App.Module
             }
 
             // define a cancel progress callback
-            PdfCancelProc cancel_callback = (data) =>
+            PdfCancelDelegate cancel_callback = (data) =>
             {
                     // to cancel the process return 1
                 Console.WriteLine("PdfCancelProc callback was called");
                 return 0;
             };
 
-            if (!doc.RemoveTags(cancel_callback, IntPtr.Zero))
+            if (!doc.RemoveTags(cancel_callback, null))
                 throw new Exception(pdfix.GetError());
 
-            if (!doc.AddTags(cancel_callback, IntPtr.Zero))
+            if (!doc.AddTags(cancel_callback, null))
                 throw new Exception(pdfix.GetError());
 
             if (!doc.Save(savePath, Pdfix.kSaveFull))

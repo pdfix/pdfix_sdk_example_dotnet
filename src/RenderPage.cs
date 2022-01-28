@@ -44,7 +44,7 @@ namespace PDFix.App.Module
                     matrix = pageView.GetDeviceMatrix(),
                     image = image
                 }, 
-                null, IntPtr.Zero))
+                null, null))
                     throw new Exception(pdfix.GetError());
 
             // prepare file stream to write into

@@ -39,12 +39,12 @@ namespace PDFix.App.Module
             // add reference pages to preflight
             for (var i = 0; i < doc.GetNumPages(); i++)
             {
-                if (!doc_preflight.AddPage(i, null, IntPtr.Zero))
+                if (!doc_preflight.AddPage(i, null, null))
                     throw new Exception(pdfix.GetError());
             }
 
             // run document preflight
-            if (!doc_preflight.Update(null, IntPtr.Zero))
+            if (!doc_preflight.Update(null, null))
                 throw new Exception(pdfix.GetError());
 
             // save preflight to stream if needed

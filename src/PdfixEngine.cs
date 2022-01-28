@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using PDFixSDK.Pdfix;
 
 namespace PDFix.App.Module
@@ -11,7 +9,7 @@ namespace PDFix.App.Module
 
         public static void Init()
         {
-            if (Instance != null)
+            if (Instance == null)
                 Instance = new Pdfix();
             if (Instance == null)
                 throw new Exception("Pdfix initialization fail");
@@ -24,7 +22,7 @@ namespace PDFix.App.Module
 
         public static void Terminate()
         {
-            if (Instance != null)
+            if (Instance._obj != IntPtr.Zero)
                 Instance.Destroy();
             Instance = null;
         }

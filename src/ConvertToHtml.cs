@@ -5,7 +5,6 @@
 
 using System;
 using PDFixSDK.Pdfix;
-using PDFixSDK.PdfToHtml;
 
 namespace PDFix.App.Module
 {
@@ -21,15 +20,12 @@ namespace PDFix.App.Module
 
             Pdfix pdfix = PdfixEngine.Instance;
 
-            PdfToHtml pdfToHtml = new PdfToHtml();
-            if (pdfToHtml == null)
-                throw new Exception("PdfToHtml initialization fail");
-
-            if (!pdfToHtml.Initialize(pdfix))
-                throw new Exception(pdfix.GetError());
-
             PdfDoc doc = pdfix.OpenDoc(openPath, "");
             if (doc == null)
+                throw new Exception(pdfix.GetError());
+
+            var html_conv = doc.CreateHtmlConversion();
+            if (html_conv == null)
                 throw new Exception(pdfix.GetError());
 
             // customize conversion 
@@ -47,24 +43,22 @@ namespace PDFix.App.Module
             // set html conversion params
             //htmlParams.type = PdfHtmlType.kPdfHtmlResponsive;
             //htmlParams.width = 1200;    
-            //htmlParams.flags |= PdfToHtml.kHtmlExportJavaScripts;
-            //htmlParams.flags |= PdfToHtml.kHtmlExportFonts;
-            //htmlParams.flags |= PdfToHtml.kHtmlRetainFontSize;
-            //htmlParams.flags |= PdfToHtml.kHtmlRetainTextColor;
-            htmlParams.flags |= PdfToHtml.kHtmlNoExternalCSS | PdfToHtml.kHtmlNoExternalJS |
-                PdfToHtml.kHtmlNoExternalIMG | PdfToHtml.kHtmlNoExternalFONT;
+            //htmlParams.flags |= Pdfix.kHtmlExportJavaScripts;
+            //htmlParams.flags |= Pdfix.kHtmlExportFonts;
+            //htmlParams.flags |= Pdfix.kHtmlRetainFontSize;
+            //htmlParams.flags |= Pdfix.kHtmlRetainTextColor;
+            htmlParams.flags |= Pdfix.kHtmlNoExternalCSS | Pdfix.kHtmlNoExternalJS |
+                Pdfix.kHtmlNoExternalIMG | Pdfix.kHtmlNoExternalFONT;
             htmlParams.image_params.format = PdfImageFormat.kImageFormatJpg;
 
-            PdfHtmlDoc htmlDoc = pdfToHtml.OpenHtmlDoc(doc);
-            if (htmlDoc == null)
+            if (!html_conv.SetParams(htmlParams))
                 throw new Exception(pdfix.GetError());
 
-            if (!htmlDoc.Save(savePath, htmlParams, null, IntPtr.Zero))
+            if (!html_conv.Save(savePath, null, IntPtr.Zero))
                 throw new Exception(pdfix.GetError());
 
-            htmlDoc.Close();
-            doc.Close();
-            pdfToHtml.Destroy();
+            html_conv.Destroy();
+            doc.Close(); 
         }
     }
 }
