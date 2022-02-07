@@ -62,7 +62,7 @@ namespace PDFix.App.Module
                     // find text object with mcid on the page to get the text state
                     int mcid = struct_elem.GetChildMcid(i);
                     var content = page.GetContent();
-                    for (int j = 0; j < content.GetNumObjects(); j++)
+                    for (int j = 0; j < content.GetNumObjects();)
                     {
                         var ts = GetPageObjectTextState(content.GetObject(j), mcid);
                         page.Release();

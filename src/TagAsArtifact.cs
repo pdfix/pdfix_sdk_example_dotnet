@@ -25,7 +25,7 @@ namespace PDFix.App.Module
                 PdsPageObject page_obj = content.GetObject(i);
 
                 PdsContentMark content_mark = page_obj.GetContentMark();
-                if (null != content_mark.GetTagArtifact() && content_mark.GetTagMcid() == -1)
+                if (content_mark.GetTagArtifact() != -1 && content_mark.GetTagMcid() == -1)
                 {
                     PdsDictionary artifact_dict = doc.CreateDictObject(false);
                     artifact_dict.Put("Type", doc.CreateNameObject(false, "Pagination"));

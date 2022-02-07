@@ -42,7 +42,7 @@ namespace PDFix.App.Module
 
         private static bool MoveParagraphToParent(PdsStructTree struct_tree)
         {
-            for (int i = 0; i < struct_tree.GetNumChildren(); i++)
+            for (int i = 0; i < struct_tree.GetNumChildren();)
             {
                 PdsObject kid_obj = struct_tree.GetChildObject(i);
                 PdsStructElement kid_elem = struct_tree.GetStructElementFromObject(kid_obj);
