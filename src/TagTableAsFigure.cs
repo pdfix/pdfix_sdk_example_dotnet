@@ -162,7 +162,7 @@ namespace PDFix.App.Module
             if (!pageMap.CreateElements(null, null))
                 throw new Exception(pdfix.GetError());
 
-            if (!page_map.AddTags(table, null, null))
+            if (!page_map.AddTags(table, false, null, null))
                 throw new Exception(pdfix.GetErrorType().ToString());
 
             // udpate the table element type
