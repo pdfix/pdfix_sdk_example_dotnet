@@ -43,7 +43,7 @@ namespace PDFix.App.Module
             if (Path.GetExtension(imgPath).ToLower() == ".png")
                 format = PdfImageFormat.kImageFormatPng;
 
-            var image_obj = doc.CreateXObjectFromImage(img_stm, format);
+            var image_obj = doc.CreateXObjectFromImage(img_stm, format, 0);
             if (image_obj == null)
                 throw new Exception(pdfix.GetError());
 

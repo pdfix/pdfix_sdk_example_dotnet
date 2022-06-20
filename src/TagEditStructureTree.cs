@@ -24,7 +24,7 @@ namespace PDFix.App.Module
             if (!doc.RemoveTags(null, null))
                 throw new Exception(pdfix.GetError());
 
-            if (!doc.AddTags(null, null))
+            if (!doc.AddTags(new PdfTagsParams(), null, null))
                 throw new Exception(pdfix.GetError());
 
             if (!doc.Save(savePath, Pdfix.kSaveFull))

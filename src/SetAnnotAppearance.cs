@@ -36,7 +36,7 @@ namespace PDFix.App.Module
             memStm.Write(0, bytes);
 
             // create XObject from the image
-            var image_obj = doc.CreateXObjectFromImage(memStm, format);
+            var image_obj = doc.CreateXObjectFromImage(memStm, format, 0);
             if (image_obj == null)
                 throw new Exception(pdfix.GetError());
 

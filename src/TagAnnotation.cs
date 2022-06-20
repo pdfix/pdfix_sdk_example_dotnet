@@ -123,7 +123,7 @@ namespace PDFix.App.Module
                 throw new Exception(pdfix.GetErrorType().ToString());
 
             // autotag document first
-            if (!doc.AddTags(null, null))
+            if (!doc.AddTags(new PdfTagsParams(), null, null))
                 throw new Exception(pdfix.GetErrorType().ToString());
 
             // get the struct tree
@@ -148,7 +148,7 @@ namespace PDFix.App.Module
             // re-tag the document the link annotation
             if (!doc.RemoveTags(null, null))
                 throw new Exception(pdfix.GetErrorType().ToString());
-            if (!doc.AddTags(null, null))
+            if (!doc.AddTags(new PdfTagsParams(), null, null))
                 throw new Exception(pdfix.GetErrorType().ToString());
 
             if (!doc.Save(savePath, Pdfix.kSaveFull))

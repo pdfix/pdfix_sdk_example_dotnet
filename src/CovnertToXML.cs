@@ -84,9 +84,6 @@ namespace PDFix.App.Module
             file.Write("<!--Created from PDF via PDFix-->\n");
             file.Write("<Document>\n");
 
-            PsMetadata metadata = doc.GetMetadata();
-
-
             // iterate through pages and parse each page individually
             for (int i = 0; i < doc.GetNumPages(); i++)
             {
