@@ -5,11 +5,11 @@ namespace PDFix.App.Module
 {
     class PdfixSamples
     {
-        public static void Run(String rootPath)
+        public static void Run(string rootPath)
         {
-            String inputPath = Utils.GetAbsolutePath(rootPath + "res/");
-            String outputPath = Utils.GetAbsolutePath("output");
-            String configPath = "";
+            string inputPath = Utils.GetAbsolutePath(rootPath + "res/");
+            string outputPath = Utils.GetAbsolutePath("output");
+            string configPath = "";
 
             System.IO.Directory.CreateDirectory(outputPath);
 
@@ -17,8 +17,12 @@ namespace PDFix.App.Module
             // Samples Free version - no authorization
             //////////////////////////////////////////////////////////////////////
 
-            Console.WriteLine("OpenFileFromStream Sample");            
+            Console.WriteLine("OpenFileFromStream Sample");
             OpenFileFromStream.Run(inputPath + "test.pdf");
+
+            Console.WriteLine("OpenFileFromAzureStorage Sample");
+            Console.WriteLine("To run this sample please install and configure Azurite emulator");
+            //OpenFileFromAzureStorage.RunAsync("test.pdf").GetAwaiter().GetResult();
 
             Console.WriteLine("ParsePdsObjects Sample");
             ParsePdsObjects.Run(inputPath + "test.pdf");
@@ -109,7 +113,7 @@ namespace PDFix.App.Module
               outputPath + "/ChangeTextColor.pdf");
 
             Console.WriteLine("ExportImages Sample");
-            ExportImages.Run(inputPath + "test.pdf", 
+            ExportImages.Run(inputPath + "test.pdf",
               outputPath);
 
             Console.WriteLine("FlattenAnnots Sample");
