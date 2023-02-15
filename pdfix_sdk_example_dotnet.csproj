@@ -67,8 +67,8 @@
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.14.0-beta.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="PDFix.OcrTesseract" Version="6.19.0" />
-    <PackageReference Include="PDFix.SDK" Version="6.19.0" />
+    <PackageReference Include="PDFix.OcrTesseract" Version="6.20.0" />
+    <PackageReference Include="PDFix.SDK" Version="6.20.0" />
   </ItemGroup>
 
 </Project>
