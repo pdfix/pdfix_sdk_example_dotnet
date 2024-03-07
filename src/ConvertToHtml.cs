@@ -54,7 +54,7 @@ namespace PDFix.App.Module
             if (!html_conv.SetParams(htmlParams))
                 throw new Exception(pdfix.GetError());
 
-            if (!html_conv.Save(savePath, null, IntPtr.Zero))
+            if (!html_conv.Save(savePath))
                 throw new Exception(pdfix.GetError());
 
             html_conv.Destroy();

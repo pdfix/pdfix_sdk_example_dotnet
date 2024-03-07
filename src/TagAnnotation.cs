@@ -119,11 +119,11 @@ namespace PDFix.App.Module
                 throw new Exception(pdfix.GetError());
 
             // cleanup any previous structure tree
-            if (!doc.RemoveTags(null, null))
+            if (!doc.RemoveTags())
                 throw new Exception(pdfix.GetErrorType().ToString());
 
             // autotag document first
-            if (!doc.AddTags(new PdfTagsParams(), null, null))
+            if (!doc.AddTags(new PdfTagsParams()))
                 throw new Exception(pdfix.GetErrorType().ToString());
 
             // get the struct tree
@@ -146,9 +146,9 @@ namespace PDFix.App.Module
                 throw new Exception(pdfix.GetErrorType().ToString());
 
             // re-tag the document the link annotation
-            if (!doc.RemoveTags(null, null))
+            if (!doc.RemoveTags())
                 throw new Exception(pdfix.GetErrorType().ToString());
-            if (!doc.AddTags(new PdfTagsParams(), null, null))
+            if (!doc.AddTags(new PdfTagsParams()))
                 throw new Exception(pdfix.GetErrorType().ToString());
 
             if (!doc.Save(savePath, Pdfix.kSaveFull))

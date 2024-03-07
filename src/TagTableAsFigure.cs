@@ -120,11 +120,11 @@ namespace PDFix.App.Module
                 throw new Exception(pdfix.GetError());
 
             // cleanup any previous structure tree
-            if (!doc.RemoveTags(null, null))
+            if (!doc.RemoveTags())
                 throw new Exception(pdfix.GetErrorType().ToString());
 
             // autotag document first
-            if (!doc.AddTags(new PdfTagsParams(), null, null))
+            if (!doc.AddTags(new PdfTagsParams()))
                 throw new Exception(pdfix.GetErrorType().ToString());
 
             // get the struct tree
@@ -159,10 +159,10 @@ namespace PDFix.App.Module
             PdePageMap pageMap = page.AcquirePageMap();
             if (pageMap == null)
                 throw new Exception(pdfix.GetError());
-            if (!pageMap.CreateElements(null, null))
+            if (!pageMap.CreateElements())
                 throw new Exception(pdfix.GetError());
 
-            if (!page_map.AddTags(table, false, new PdfTagsParams(), null, null))
+            if (!page_map.AddTags(table, false, new PdfTagsParams()))
                 throw new Exception(pdfix.GetErrorType().ToString());
 
             // udpate the table element type

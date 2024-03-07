@@ -49,7 +49,7 @@ namespace PDFix.App.Module
                 image = img
             };
 
-            if (!page.DrawContent(renderParams, null, null))
+            if (!page.DrawContent(renderParams))
                 PdfixEngine.ThrowException();
 
             PdfImageParams imgParams = new PdfImageParams

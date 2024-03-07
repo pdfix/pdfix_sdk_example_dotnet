@@ -38,13 +38,11 @@ namespace PDFix.App.Module
                 throw new Exception(pdfix.GetError());
 
             // draw content into the image
-            if (!page.DrawContent(new PdfPageRenderParams()
-                {
+            if (!page.DrawContent(new PdfPageRenderParams() {
                     clip_box = page.GetCropBox(),
                     matrix = pageView.GetDeviceMatrix(),
                     image = image
-                }, 
-                null, null))
+                }))
                     throw new Exception(pdfix.GetError());
 
             // prepare file stream to write into

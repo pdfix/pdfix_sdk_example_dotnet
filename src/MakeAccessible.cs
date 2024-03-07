@@ -29,7 +29,7 @@ namespace PDFix.App.Module
 
             // convert to PDF/UA
             PdfAccessibleParams accParams = new PdfAccessibleParams();
-            if (!doc.MakeAccessible(accParams, title, language, null, null))
+            if (!doc.MakeAccessible(accParams, title, language))
                 throw new Exception(pdfix.GetError());
 
             if (!doc.Save(savePath, Pdfix.kSaveFull))

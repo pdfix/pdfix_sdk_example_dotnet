@@ -39,10 +39,10 @@ namespace PDFix.App.Module
                 return 0;
             };
 
-            if (!doc.RemoveTags(cancel_callback, null))
+            if (!doc.RemoveTags())
                 throw new Exception(pdfix.GetError());
 
-            if (!doc.AddTags(new PdfTagsParams(), cancel_callback, null))
+            if (!doc.AddTags(new PdfTagsParams()))
                 throw new Exception(pdfix.GetError());
 
             if (!doc.Save(savePath, Pdfix.kSaveFull))

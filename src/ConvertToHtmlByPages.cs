@@ -62,11 +62,11 @@ namespace PDFix.App.Module
             // convert pages
             for (int i = 0; i < doc.GetNumPages(); i++)
             {
-                if (!html_conv.AddPage(i, null, IntPtr.Zero))
+                if (!html_conv.AddPage(i))
                     throw new Exception(pdfix.GetError());
             }
 
-            if (!html_conv.SaveToStream(docStm, null, IntPtr.Zero))
+            if (!html_conv.SaveToStream(docStm))
                 throw new Exception(pdfix.GetError());
 
             docStm.Write(docStm.GetSize(), System.Text.Encoding.Default.GetBytes("</body>\n</html>"));
