@@ -123,10 +123,7 @@ namespace PDFix.App.Module
             Console.WriteLine("MakeAccessible Sample");
             MakeAccessible.Run(inputPath + "test.pdf",
               outputPath + "/MakeAccessible.pdf",
-              true,
-              "en-us",
-              "",
-              configPath);
+              inputPath + "/make-accessible.json");
 
             Console.WriteLine("TagsReadStructTree sample");
             TagsReadStructTree.Run(inputPath + "test.pdf");

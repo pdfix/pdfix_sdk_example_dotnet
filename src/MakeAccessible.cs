@@ -13,10 +13,7 @@ namespace PDFix.App.Module
         public static void Run(
             String openPath,                            // source PDF document
             String savePath,                            // output PDF document
-            bool preflight,                             // preflight page before tagging
-            String language,                            // document reading language
-            String title,                               // document title
-            String configPath                           // configuration file
+            String commandPath                          // command configuration file
             )
         {
             Pdfix pdfix = PdfixEngine.Instance;
@@ -25,12 +22,24 @@ namespace PDFix.App.Module
             if (doc == null)
                 throw new Exception(pdfix.GetError());
 
-            var doc_template = doc.GetTemplate();
+            PsCommand cmd = doc.GetCommand();
 
-            // convert to PDF/UA
-            PdfAccessibleParams accParams = new PdfAccessibleParams();
-            if (!doc.MakeAccessible(accParams, title, language))
+            // customize auto-tagging
+            PsFileStream stm = pdfix.CreateFileStream(commandPath, PsFileMode.kPsReadOnly);
+            if (stm == null)
+            {
                 throw new Exception(pdfix.GetError());
+            }
+            if (!cmd.LoadParamsFromStream(stm, PsDataFormat.kDataFormatJson))
+            {
+                throw new Exception(pdfix.GetError());
+            }
+            stm.Destroy();
+
+            if (!cmd.Run())
+            {
+                throw new Exception(pdfix.GetError());
+            }
 
             if (!doc.Save(savePath, Pdfix.kSaveFull))
                 throw new Exception(pdfix.GetError());
