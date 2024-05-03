@@ -22,25 +22,41 @@ namespace PDFix.App.Module
             if (doc == null)
                 throw new Exception(pdfix.GetError());
 
-            PsCommand cmd = doc.GetCommand();
+            PsCommand command = doc.GetCommand();
 
-            // customize auto-tagging
-            PsFileStream stm = pdfix.CreateFileStream(commandPath, PsFileMode.kPsReadOnly);
-            if (stm == null)
+            PsStream cmdStm;
+
+            // if command path is empty, use the default make accessible command from the SDK, othervise use the provided path to JSON
+            if (commandPath.Length == 0)
+            {
+                cmdStm = pdfix.CreateMemStream();
+                if ((cmdStm == null) || !command.SaveCommandsToStream(PsCommandType.kCommandMakeAccessible, cmdStm, PsDataFormat.kDataFormatJson,
+                                                            Pdfix.kSaveFull))
+                {
+                    throw new Exception(pdfix.GetError());
+                }
+            }
+            else
+            {
+                cmdStm = pdfix.CreateFileStream(commandPath, PsFileMode.kPsReadOnly);
+                if (cmdStm == null)
+                {
+                    throw new Exception(pdfix.GetError());
+                }
+            }
+            if (!command.LoadParamsFromStream(cmdStm, PsDataFormat.kDataFormatJson))
             {
                 throw new Exception(pdfix.GetError());
             }
-            if (!cmd.LoadParamsFromStream(stm, PsDataFormat.kDataFormatJson))
-            {
-                throw new Exception(pdfix.GetError());
-            }
-            stm.Destroy();
+            cmdStm.Destroy();
 
-            if (!cmd.Run())
+            // Run the command
+            if (!command.Run())
             {
                 throw new Exception(pdfix.GetError());
             }
 
+            // save document
             if (!doc.Save(savePath, Pdfix.kSaveFull))
                 throw new Exception(pdfix.GetError());
 
