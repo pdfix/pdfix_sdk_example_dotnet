@@ -9,7 +9,7 @@ namespace PDFix.App.Module
             try
             {
                 PdfixEngine.Init();
-                PdfixSamples.Run("..\\..\\..\\");
+                PdfixSamples.Run("../../../");
                 Console.WriteLine("SUCCESS");
             }
             catch (System.Exception ex)
