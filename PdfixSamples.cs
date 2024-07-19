@@ -152,12 +152,6 @@ namespace PDFix.App.Module
             TagAsArtifact.Run(inputPath + "test.pdf",
               outputPath + "/TagAsArtifact.pdf");
 
-            //Console.WriteLine("OcrWithTesseract Sample");
-            //OcrWithTesseract.Run(inputPath + "test.pdf",
-            //  outputPath + "OcrWithTesseract.pdf",
-            //  inputPath + "/tesseract/tessdata",
-            //  "eng");
-
             Console.WriteLine("ThreadSafePdfix Sample");
             ThreadSafePdfix.Run(inputPath + "test.pdf");
         }
