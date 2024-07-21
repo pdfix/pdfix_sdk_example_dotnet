@@ -10,7 +10,7 @@ namespace PDFix.App.Module
 {
     class Initialization
     {
-        public static void Run( 
+        public static void Run(
             String email,                                           // authorization email
             String licenseKey                                       // license key
             )
@@ -19,7 +19,10 @@ namespace PDFix.App.Module
             if (pdfix == null)
                 throw new Exception("Pdfix initialization fail. Please set correct email and license key.");
 
-            Console.WriteLine(pdfix.GetVersionMajor().ToString());
+            Console.WriteLine("PDFix SDK version: " + 
+                                pdfix.GetVersionMajor().ToString() + "." +
+                                pdfix.GetVersionMinor().ToString() + "." + 
+                                pdfix.GetVersionPatch().ToString());
 
             if (licenseKey.Length > 0)
             {

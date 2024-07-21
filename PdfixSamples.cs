@@ -16,6 +16,9 @@ namespace PDFix.App.Module
             //////////////////////////////////////////////////////////////////////
             // Samples Free version - no authorization
             //////////////////////////////////////////////////////////////////////
+            
+            Console.WriteLine("Initialization");
+            Initialization.Run("", "");
 
             Console.WriteLine("OpenFileFromStream Sample");
             OpenFileFromStream.Run(inputPath + "test.pdf");
