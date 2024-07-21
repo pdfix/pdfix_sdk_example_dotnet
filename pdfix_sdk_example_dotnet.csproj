@@ -67,7 +67,7 @@
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.14.0-beta.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="PDFix.SDK" Version="8.1.4" />
+    <PackageReference Include="PDFix.SDK" Version="8.*" />
   </ItemGroup>
 
 </Project>
