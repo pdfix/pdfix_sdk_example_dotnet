@@ -121,7 +121,7 @@ namespace PDFix.App.Module
                 Console.WriteLine(indent, "alt: " + alt_str);
 
             var numPages = struct_elem.GetNumPages();
-            for (int i = 0;) i < numPages; i++) {
+            for (int i = 0; i < numPages; i++) {
                 Console.WriteLine(indent, "Page number: "+ struct_elem.GetPageNumber(i));
             }
 
