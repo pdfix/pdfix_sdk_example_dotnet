@@ -124,8 +124,8 @@ namespace PDFix.App.Module
             for (int i = 0; i < numPages; i++) {
                 Console.WriteLine(indent, "Page number: "+ struct_elem.GetPageNumber(i));
             }
-
-            var page_num = struct_elem.GetPageNumber();
+        
+            var page_num = struct_elem.GetPageNumber(0);
             if (page_num != -1)
                 Console.WriteLine(indent, "Page number: "+ page_num);
 

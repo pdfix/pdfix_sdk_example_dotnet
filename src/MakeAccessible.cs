@@ -30,7 +30,7 @@ namespace PDFix.App.Module
             if (commandPath.Length == 0)
             {
                 cmdStm = pdfix.CreateMemStream();
-                if ((cmdStm == null) || !command.SaveCommandsToStream(PsCommandType.kCommandMakeAccessible, cmdStm, PsDataFormat.kDataFormatJson,
+                if ((cmdStm == null) || !command.SaveCommandsToStream(PsCommandType.kActionMakeAccessible, cmdStm, PsDataFormat.kDataFormatJson,
                                                             Pdfix.kSaveFull))
                 {
                     throw new Exception(pdfix.GetError());
