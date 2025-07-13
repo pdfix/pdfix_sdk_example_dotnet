@@ -11,12 +11,12 @@ namespace PDFix.App.Module
             string outputPath = Utils.GetAbsolutePath("output");
             string configPath = "";
 
-            System.IO.Directory.CreateDirectory(outputPath);
+            System.IO.Directory.CreateDirectory(outputPath);          
 
             //////////////////////////////////////////////////////////////////////
             // Samples Free version - no authorization
             //////////////////////////////////////////////////////////////////////
-            
+
             Console.WriteLine("Initialization");
             Initialization.Run("", "");
 
@@ -127,6 +127,10 @@ namespace PDFix.App.Module
             MakeAccessible.Run(inputPath + "test.pdf",
               outputPath + "/MakeAccessible.pdf",
               inputPath + "/make-accessible.json");
+
+            Console.WriteLine("TagContentInRect");
+            TagContentInRect.Run( inputPath + "test.pdf",
+                                  outputPath + "/TagContentInRect.pdf");
 
             Console.WriteLine("TagsReadStructTree sample");
             TagsReadStructTree.Run(inputPath + "test.pdf");
