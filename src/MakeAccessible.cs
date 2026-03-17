@@ -147,7 +147,7 @@ namespace PDFix.App.Module
 
             try
             {
-                using JsonDocument doc = JsonDocument.Parse(json);
+                JsonDocument doc = JsonDocument.Parse(json);
                 JsonElement root = doc.RootElement;
 
                 if (root.TryGetProperty("name", out JsonElement nameEl) &&
