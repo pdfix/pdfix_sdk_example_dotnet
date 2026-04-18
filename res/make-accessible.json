@@ -24,18 +24,6 @@
             "name": "embed_font"
         },
         {
-            "name": "add_missing_unicode"
-        },
-        {
-            "name": "preflight",
-            "params": [
-                {
-                    "name": "merge_preflight",
-                    "value": true
-                }
-            ]
-        },
-        {
             "name": "add_tags",
             "params": [
                 {
