@@ -44,17 +44,20 @@ The project defaults to `net6.0`. Any .NET SDK 6.0 or later can build it:
 dotnet build pdfix_sdk_example_dotnet.csproj
 ```
 
-To target a different .NET version, override `TargetFramework`:
+To target a different .NET version, run restore and build with `TargetFramework` override:
 
 ```bash
 # .NET 8.0
-dotnet build pdfix_sdk_example_dotnet.csproj -p:TargetFramework=net8.0
+dotnet restore pdfix_sdk_example_dotnet.csproj -p:TargetFramework=net8.0
+dotnet build pdfix_sdk_example_dotnet.csproj -p:TargetFramework=net8.0 --no-restore
 
 # .NET 10.0
-dotnet build pdfix_sdk_example_dotnet.csproj -p:TargetFramework=net10.0
+dotnet restore pdfix_sdk_example_dotnet.csproj -p:TargetFramework=net10.0
+dotnet build pdfix_sdk_example_dotnet.csproj -p:TargetFramework=net10.0 --no-restore
 
 # .NET Framework 4.8 (Windows only)
-dotnet build pdfix_sdk_example_dotnet.csproj -p:TargetFramework=net48
+dotnet restore pdfix_sdk_example_dotnet.csproj -p:TargetFramework=net48
+dotnet build pdfix_sdk_example_dotnet.csproj -p:TargetFramework=net48 --no-restore
 ```
 
 ## Run the example
