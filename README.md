@@ -41,20 +41,20 @@ git clone https://github.com/pdfix/pdfix_sdk_example_dotnet
 The project defaults to `net6.0`. Any .NET SDK 6.0 or later can build it:
 
 ```bash
-dotnet build pdfix_sdk_example_dotnet.sln
+dotnet build pdfix_sdk_example_dotnet.csproj
 ```
 
 To target a different .NET version, override `TargetFramework`:
 
 ```bash
 # .NET 8.0
-dotnet build pdfix_sdk_example_dotnet.sln -p:TargetFramework=net8.0
+dotnet build pdfix_sdk_example_dotnet.csproj -p:TargetFramework=net8.0
 
 # .NET 10.0
-dotnet build pdfix_sdk_example_dotnet.sln -p:TargetFramework=net10.0
+dotnet build pdfix_sdk_example_dotnet.csproj -p:TargetFramework=net10.0
 
 # .NET Framework 4.8 (Windows only)
-dotnet build pdfix_sdk_example_dotnet.sln -p:TargetFramework=net48
+dotnet build pdfix_sdk_example_dotnet.csproj -p:TargetFramework=net48
 ```
 
 ## Run the example
