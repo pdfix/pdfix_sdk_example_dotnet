@@ -113,7 +113,7 @@ namespace PDFix.App.Module
             String savePath                             // dest PDF document
             )
         {
-            Pdfix pdfix = PdfixEngine.Instance;
+            pdfix = PdfixEngine.Instance;
 
             PdfDoc doc = pdfix.OpenDoc(openPath, "");
             if (doc == null)
