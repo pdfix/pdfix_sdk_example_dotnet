@@ -9,19 +9,31 @@ For more information please visit [https://pdfix.net](https://pdfix.net).
 ## Code integration
 
 ```cs
+using System;
 using PDFixSDK.Pdfix;
 
 static void Main()
 {
-    Pdfix pdfix = new Pdfix();
-    if (pdfix == null)
-        throw new Exception("Pdfix initialization fail");
+    // Typical pattern: one Pdfix per process. Dispose()/Destroy() release native
+    // objects for this session; they do not unload pdf.dll from the process.
+    using (var pdfix = new Pdfix())
+    {
+        if (pdfix == null)
+            throw new Exception("Pdfix initialization fail");
 
-    // your code ...
-
-    pdfix.Destroy();
+        using (var doc = pdfix.OpenDoc("input.pdf", ""))
+        {
+            // your code ...
+        }
+        // Exiting the pdfix using block calls Dispose() → Destroy() on the root
+        // Pdfix instance. The native library remains loaded until process exit.
+    }
 }
 ```
+
+Owned SDK objects implement `IDisposable`. Prefer `using` — `Dispose()` calls the correct native cleanup (`Close`, `Destroy`, or `Release`) for each type. See the [PDFix.SDK NuGet readme](https://www.nuget.org/packages/PDFix.SDK/) for callback pinning and handle-map behavior (9.1+).
+
+**Process lifetime:** `Pdfix.Destroy()` (or `Dispose()` on `Pdfix`) tears down open documents and native SDK state for the current session. It does **not** unload `pdf.dll` / `libpdf.so` / `libpdf.dylib` from the process. The native library stays loaded until the host process exits. Plan for **one SDK init per process** in long-running services, plugins, or app domains — not repeated full unload/reload cycles. Short demos and CLI-style apps match this model; `Release()` on borrowed handles (for example pages from `AcquirePage()`) only drops that borrow and is unrelated to unloading the DLL.
 
 ## Prerequisites
 
