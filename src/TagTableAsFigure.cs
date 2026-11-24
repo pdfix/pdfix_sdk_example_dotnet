@@ -26,17 +26,19 @@ namespace PDFix.App.Module
                     // acquire page on which the element is present
                     PdfDoc doc = struct_elem.GetStructTree().GetDoc();
                     PdfPage page = doc.AcquirePage(struct_elem.GetChildPageNumber(i));
+                    if (page == null)
+                        throw new Exception(pdfix.GetError());
 
-                    // find text object with mcid on the page to get the text state
+                    // find page objects with the same mcid on the page to get their bbox
                     int mcid = struct_elem.GetChildMcid(i);
                     var content = page.GetContent();
                     for (int j = 0; j < content.GetNumObjects(); j++)
                     {
                         PdsPageObject page_object = content.GetObject(j);
 
-                        // check if this text page object has the same mcid
-                        PdsContentMark content_mark = page_object.GetContentMark();
-                        if (content_mark != null && content_mark.GetTagMcid() == mcid)
+                        // check if this page object has the same mcid
+                        // (PdsContentMark.GetTagMcid returns the index of the tag, not the MCID)
+                        if (page_object.GetMcid() == mcid)
                         {
                             PdfRect elem_bbox = page_object.GetBBox();
                             if ((bbox.left - bbox.right == 0) || (bbox.top - bbox.bottom == 0))
@@ -51,15 +53,64 @@ namespace PDFix.App.Module
                             result = true;
                         }
                     }
+                    page.Release();
                 }
                 else if (struct_elem.GetChildType(i) == PdfStructElementType.kPdsStructChildElement)
                 {
                     PdsObject kid_obj = struct_elem.GetChildObject(i);
                     PdsStructElement kid_elem = struct_elem.GetStructTree().GetStructElementFromObject(kid_obj);
-                    GetStructElementBBox(kid_elem, ref bbox);
+                    if (GetStructElementBBox(kid_elem, ref bbox))
+                        result = true;
                 }
             }
             return result;
+        }
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+        // SetStateFlagsOutside
+        // set state flags on page objects and annotations that do not intersect the bbox
+        // (all of them when bbox is null), and reset the others to the default state
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+        private static bool Intersects(PdfRect a, PdfRect b)
+        {
+            return (a.left < b.right) && (b.left < a.right) && (a.bottom < b.top) && (b.bottom < a.top);
+        }
+
+        private static void SetStateFlagsOutside(PdfPage page, PdfRect bbox, int flags)
+        {
+            var content = page.GetContent();
+            for (int i = 0; i < content.GetNumObjects(); i++)
+            {
+                PdsPageObject page_object = content.GetObject(i);
+                bool inside = bbox != null && Intersects(page_object.GetBBox(), bbox);
+                page_object.SetStateFlags(inside ? Pdfix.kStateDefault : flags);
+            }
+            for (int i = 0; i < page.GetNumAnnots(); i++)
+            {
+                PdfAnnot annot = page.GetAnnot(i);
+                if (annot == null)
+                    continue;
+                bool inside = bbox != null && Intersects(annot.GetBBox(), bbox);
+                annot.SetStateFlags(inside ? Pdfix.kStateDefault : flags);
+            }
+        }
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+        // HasChildOfType
+        // check if the struct element has a direct kid struct element of the given type
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+        private static bool HasChildOfType(PdsStructElement struct_elem, string type)
+        {
+            for (int i = 0; i < struct_elem.GetNumChildren(); i++)
+            {
+                if (struct_elem.GetChildType(i) != PdfStructElementType.kPdsStructChildElement)
+                    continue;
+                PdsObject kid_obj = struct_elem.GetChildObject(i);
+                PdsStructElement kid_elem = struct_elem.GetStructTree().GetStructElementFromObject(kid_obj);
+                if (kid_elem != null && kid_elem.GetType_(true) == type)
+                    return true;
+            }
+            return false;
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,7 +188,8 @@ namespace PDFix.App.Module
                 throw new Exception("No table found.");
 
             PdfRect bbox = new PdfRect();
-            GetStructElementBBox(table, ref bbox);
+            if (!GetStructElementBBox(table, ref bbox))
+                throw new Exception("Table has no content.");
 
             // remove all items from the table to make it untagged cotnent
             for (int i = table.GetNumChildren() - 1; i >= 0; i--)
@@ -145,25 +197,42 @@ namespace PDFix.App.Module
 
             // tag page
             PdfPage page = doc.AcquirePage(0);
-
-            PdePageMap page_map = page.AcquirePageMap();
-            PdeElement elem = page_map.CreateElement(PdfElementType.kPdeImage, null);
-            elem.SetBBox(bbox);
-            elem.SetAlt("This is image caption");
-
-            // prepare document template to ignore already tagged content
-            var doc_prelight = doc.GetTemplate();
-            doc_prelight.SetProperty("ignore_tags", 1);
-
-            // re-tag non-tagged page content
-            PdePageMap pageMap = page.AcquirePageMap();
-            if (pageMap == null)
+            if (page == null)
                 throw new Exception(pdfix.GetError());
-            if (!pageMap.CreateElements())
-                throw new Exception(pdfix.GetError());
+            PdePageMap page_map = null;
+            try
+            {
+                // exclude content and annotations outside the table so AddTags writes only the
+                // figure; otherwise the whole page would be re-tagged into the table element
+                SetStateFlagsOutside(page, bbox, Pdfix.kStateNoRender | Pdfix.kStateExclude);
 
-            if (!page_map.AddTags(table, false, new PdfTagsParams()))
-                throw new Exception(pdfix.GetErrorType().ToString());
+                page_map = page.AcquirePageMap();
+                if (page_map == null)
+                    throw new Exception(pdfix.GetError());
+                PdeElement elem = page_map.CreateElement(PdfElementType.kPdeImage, null);
+                if (elem == null)
+                    throw new Exception(pdfix.GetError());
+                elem.SetBBox(bbox);
+                elem.SetAlt("This is image caption");
+
+                // re-tag the table content as a figure
+                if (!page_map.CreateElements())
+                    throw new Exception(pdfix.GetError());
+
+                if (!page_map.AddTags(table, false, new PdfTagsParams()))
+                    throw new Exception(pdfix.GetErrorType().ToString());
+            }
+            finally
+            {
+                if (page_map != null)
+                    page_map.Release();
+                SetStateFlagsOutside(page, null, Pdfix.kStateDefault);
+                page.Release();
+            }
+
+            // AddTags must put the new Figure into the table element passed as the parent
+            if (!HasChildOfType(table, "Figure"))
+                throw new Exception("Figure was not tagged into the table element.");
 
             // udpate the table element type
             if (!table.SetType("Sect"))
